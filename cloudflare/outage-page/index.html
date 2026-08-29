@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#07110b">
+  <title>Sprey — Temporary Service Interruption</title>
+  <style>
+    :root{color-scheme:dark;--bg:#07110b;--surface:#0d1812;--line:#20352a;--ink:#f3f7f5;--muted:#9caaa2;--accent:#84cc16;--accent2:#22c55e}
+    *{box-sizing:border-box}
+    html,body{min-height:100%}
+    body{margin:0;display:grid;place-items:center;padding:28px;background:radial-gradient(circle at 78% 12%,rgba(34,197,94,.12),transparent 30%),var(--bg);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    main{width:min(720px,100%);padding:42px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(180deg,rgba(13,24,18,.96),rgba(7,17,11,.96));box-shadow:0 28px 90px rgba(0,0,0,.35)}
+    .brand{display:flex;align-items:center;gap:14px;margin-bottom:38px;font-weight:750;font-size:20px;letter-spacing:-.03em}
+    .mark{display:flex;align-items:end;gap:4px;width:42px;height:42px;padding:6px}
+    .mark i{display:block;width:7px;border-radius:3px;background:linear-gradient(180deg,var(--accent),var(--accent2))}
+    .mark i:nth-child(1){height:14px}.mark i:nth-child(2){height:23px}.mark i:nth-child(3){height:32px}
+    .eyebrow{margin:0 0 12px;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+    h1{margin:0 0 18px;font-size:clamp(34px,7vw,60px);line-height:1.02;letter-spacing:-.05em}
+    p{margin:0 0 16px;color:var(--muted);font-size:18px}
+    .status{display:inline-flex;align-items:center;gap:8px;margin:18px 0 28px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(132,204,22,.06);color:var(--ink);font-size:14px}
+    .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 5px rgba(132,204,22,.08)}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+    a{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:12px;text-decoration:none;font-weight:750}
+    .primary{background:linear-gradient(135deg,var(--accent2),var(--accent));color:#041007}
+    .secondary{border:1px solid var(--line);color:var(--ink);background:rgba(255,255,255,.02)}
+    small{display:block;margin-top:34px;color:#748078}
+    @media(max-width:560px){main{padding:30px 24px}.actions{flex-direction:column}a{width:100%}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><span>Sprey</span></div>
+  <p class="eyebrow">Service status</p>
+  <h1>We’ll be back shortly.</h1>
+  <p>The Sprey website is temporarily unavailable while the primary application server recovers or maintenance is in progress.</p>
+  <p>Payment infrastructure and documentation may remain available independently.</p>
+  <div class="status"><span class="dot"></span><span>Static fallback is online</span></div>
+  <div class="actions">
+    <a class="primary" href="https://pay.sprey.win/" target="_blank" rel="noopener noreferrer">Open Sprey Pay ↗</a>
+    <a class="secondary" href="https://docs.sprey.win/" target="_blank" rel="noopener noreferrer">Open Docs ↗</a>
+  </div>
+  <small>This page does not provide WooCommerce cart, account, or checkout functionality.</small>
+</main>
+</body>
+</html>
