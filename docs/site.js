@@ -1,16 +1,11 @@
 (() => {
   const root = document.documentElement;
   const themes = ['auto', 'light', 'dark'];
-  const languageOptions = [
-    ['en', 'English'], ['ru', 'Русский'], ['kk', 'Қазақша'], ['de', 'Deutsch'],
-    ['es', 'Español'], ['fr', 'Français'], ['pt', 'Português'], ['tr', 'Türkçe'],
-    ['zh-CN', '简体中文'], ['ja', '日本語'], ['ko', '한국어'], ['ar', 'العربية']
-  ];
 
   let themeButton = document.querySelector('[data-theme-toggle]');
-  let translateSelect = document.querySelector('[data-translate]');
+  let translateWrapper = document.querySelector('.gtranslate_wrapper');
 
-  if ((!themeButton || !translateSelect) && document.querySelector('.site-header')) {
+  if ((!themeButton || !translateWrapper) && document.querySelector('.site-header')) {
     let tools = document.querySelector('.header-tools');
     if (!tools) {
       tools = document.createElement('div');
@@ -27,18 +22,11 @@
       tools.appendChild(themeButton);
     }
 
-    if (!translateSelect) {
-      translateSelect = document.createElement('select');
-      translateSelect.className = 'tool-control';
-      translateSelect.dataset.translate = '';
-      translateSelect.setAttribute('aria-label', 'Translate page');
-      for (const [value, label] of languageOptions) {
-        const option = document.createElement('option');
-        option.value = value;
-        option.textContent = label;
-        translateSelect.appendChild(option);
-      }
-      tools.appendChild(translateSelect);
+    if (!translateWrapper) {
+      translateWrapper = document.createElement('div');
+      translateWrapper.className = 'gtranslate_wrapper tool-control';
+      translateWrapper.setAttribute('aria-label', 'Translate page');
+      tools.appendChild(translateWrapper);
     }
   }
 
@@ -62,13 +50,18 @@
     applyTheme(themes[(themes.indexOf(current) + 1) % themes.length]);
   });
 
-  translateSelect?.addEventListener('change', () => {
-    const language = translateSelect.value;
-    if (!language || language === 'en') return;
-    const url = new URL('https://translate.google.com/translate');
-    url.searchParams.set('sl', 'en');
-    url.searchParams.set('tl', language);
-    url.searchParams.set('u', window.location.href);
-    window.location.href = url.toString();
-  });
+  window.gtranslateSettings = {
+    default_language: 'en',
+    native_language_names: true,
+    wrapper_selector: '.gtranslate_wrapper',
+    flag_style: '3d'
+  };
+
+  if (translateWrapper && !document.querySelector('script[data-sprey-gtranslate]')) {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.gtranslate.net/widgets/latest/popup.js';
+    script.defer = true;
+    script.dataset.spreyGtranslate = '';
+    document.head.appendChild(script);
+  }
 })();
