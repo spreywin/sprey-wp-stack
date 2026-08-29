@@ -30,6 +30,58 @@
     }
   }
 
+  const gtranslateTheme = document.createElement('style');
+  gtranslateTheme.dataset.spreyGtranslateTheme = '';
+  gtranslateTheme.textContent = `
+    .gt_white_content {
+      background-color: #ffffff !important;
+      color: #263142 !important;
+    }
+    .gt_white_content .gt_languages,
+    .gt_white_content .gt_languages a,
+    .gt_white_content .gt_languages span,
+    .gt_white_content .gt_languages div,
+    .gt_white_content .gt_languages td,
+    .gt_white_content .gt_languages li {
+      color: #263142 !important;
+      text-shadow: none !important;
+    }
+    html[data-theme='dark'] .gt_white_content {
+      background-color: #07110b !important;
+      color: #f3f7f5 !important;
+    }
+    html[data-theme='dark'] .gt_white_content .gt_languages,
+    html[data-theme='dark'] .gt_white_content .gt_languages a,
+    html[data-theme='dark'] .gt_white_content .gt_languages span,
+    html[data-theme='dark'] .gt_white_content .gt_languages div,
+    html[data-theme='dark'] .gt_white_content .gt_languages td,
+    html[data-theme='dark'] .gt_white_content .gt_languages li {
+      color: #f3f7f5 !important;
+      border-color: #20352a !important;
+      text-shadow: none !important;
+    }
+    html[data-theme='dark'] .gt_white_content .gt_languages a:hover,
+    html[data-theme='dark'] .gt_white_content .gt_languages a:focus {
+      color: #84cc16 !important;
+    }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-theme]) .gt_white_content {
+        background-color: #07110b !important;
+        color: #f3f7f5 !important;
+      }
+      html:not([data-theme]) .gt_white_content .gt_languages,
+      html:not([data-theme]) .gt_white_content .gt_languages a,
+      html:not([data-theme]) .gt_white_content .gt_languages span,
+      html:not([data-theme]) .gt_white_content .gt_languages div,
+      html:not([data-theme]) .gt_white_content .gt_languages td,
+      html:not([data-theme]) .gt_white_content .gt_languages li {
+        color: #f3f7f5 !important;
+        border-color: #20352a !important;
+      }
+    }
+  `;
+  document.head.appendChild(gtranslateTheme);
+
   function applyTheme(theme) {
     const selected = themes.includes(theme) ? theme : 'auto';
     if (selected === 'auto') root.removeAttribute('data-theme');
