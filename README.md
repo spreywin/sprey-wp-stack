@@ -1,6 +1,7 @@
 # Sprey WP Stack
 
-> **Documentation:** [Sprey Docs](https://docs.sprey.win/stacks/wp-stack/) · [Temporary GitHub Pages portal](https://spreywin.github.io/sprey-docs/stacks/wp-stack/)
+> **Product landing:** [spreywin.github.io/sprey-wp-stack](https://spreywin.github.io/sprey-wp-stack/)  
+> **Canonical documentation:** [Sprey Docs](https://docs.sprey.win/stacks/wp-stack/) · [GitHub Pages](https://spreywin.github.io/sprey-docs/stacks/wp-stack/)
 
 Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keeps the public surface minimal: Caddy is the only service that publishes ports; WordPress, MariaDB, and optional phpMyAdmin stay on private Docker networks.
 
@@ -13,6 +14,8 @@ Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keep
 - WooCommerce-ready WordPress deployment
 - BTCPay for WooCommerce V2 integration guidance
 - Cloudflare production guidance and static outage-page failover design
+- `status.sh`: disk, inode, RAM, swap, load, container resource, and Docker storage overview
+- bounded Docker logs: local logging driver, 10 MB per file, up to 3 files per container
 
 ## Requirements
 
@@ -30,7 +33,7 @@ cd sprey-wp-stack
 sudo ./install.sh example.com admin@example.com
 ```
 
-The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, and starts the stack. It uses the port of the active SSH connection, falling back to `sshd`'s effective configuration only when run from a provider console. It refuses to replace an existing `.env` or run on an unsupported system.
+The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, enables the resource status helper, and starts the stack. It uses the port of the active SSH connection, falling back to `sshd`'s effective configuration only when run from a provider console. It refuses to replace an existing `.env` or run on an unsupported system.
 
 ## Manual start
 
@@ -46,6 +49,31 @@ docker compose ps
 ```
 
 Open `https://YOUR_DOMAIN` and complete the WordPress installer. Caddy obtains and renews certificates automatically once DNS and firewall settings are correct.
+
+## Resource and disk status
+
+Run the bundled status command whenever you need a quick VPS health snapshot:
+
+```bash
+./status.sh
+```
+
+It reports system uptime/load, root filesystem usage, inode usage, RAM/swap, Compose service state, a one-shot container CPU/memory/network/block-I/O snapshot, and Docker disk usage. For a deeper storage breakdown:
+
+```bash
+docker system df -v
+```
+
+## Log rotation
+
+All stack containers use Docker's `local` logging driver with explicit rotation limits:
+
+```text
+max-size: 10m
+max-file: 3
+```
+
+This prevents application and proxy logs from growing without a bound and silently consuming the VPS disk. The limit applies to Caddy, WordPress, MariaDB, and the optional phpMyAdmin container.
 
 ## BTCPay Server and WooCommerce
 
@@ -95,6 +123,7 @@ docker compose --profile admin stop phpmyadmin
 # Validate and inspect
 docker compose config --quiet
 docker compose ps
+./status.sh
 docker compose logs -f caddy
 
 # Update images and recreate containers. Review release notes first.
@@ -109,10 +138,18 @@ docker compose exec -T mariadb mariadb-dump -u root -p"$MYSQL_ROOT_PASSWORD" "$M
 
 Do not run `docker compose down -v` on a live stack: it removes the named volumes containing the site, database, and Caddy certificates.
 
+## Documentation model
+
+The repository keeps two public surfaces intentionally:
+
+- the **Sprey WP Stack product landing** stays in this repository under `docs/` and is published at `https://spreywin.github.io/sprey-wp-stack/`;
+- canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs), covering platform architecture, products, stacks, integrations, and operations.
+
+The product landing supports responsive layouts, Light/Dark/Auto themes, and optional machine-translated views while English remains the canonical source.
+
 ## Repository conventions
 
-- All public documentation, source comments, UI strings, examples, commit messages and release notes are written in English.
-- Canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs); this repository stays focused on the WP Stack implementation.
+- All canonical public documentation, source comments, UI strings, examples, commit messages and release notes are written in English.
 - Copy `.env.example` to `.env`; `.env` never enters Git.
 - Default tags deliberately follow current stable WordPress/PHP and Caddy, plus the MariaDB LTS line.
 - Override an image tag in `.env` only after testing a compatibility exception.
@@ -121,6 +158,6 @@ Do not run `docker compose down -v` on a live stack: it removes the named volume
 
 ## v1.0 scope
 
-Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, and the Cloudflare outage-fallback deployment design. Shared architecture and product documentation live in the independent Sprey Docs portal.
+Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, bounded container logging, built-in VPS resource visibility, the product landing, and the Cloudflare outage-fallback deployment design. Shared architecture and product documentation live in the independent Sprey Docs portal.
 
 Monitoring platforms, VPN/control-plane services, and the BTCPay Server infrastructure itself remain separate projects/services.
