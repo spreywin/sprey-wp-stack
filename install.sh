@@ -32,8 +32,8 @@ if ! command -v docker >/dev/null; then
   curl -fsSL "https://download.docker.com/linux/$ID/gpg" -o /etc/apt/keyrings/docker.asc
   chmod a+r /etc/apt/keyrings/docker.asc
   CODENAME="${VERSION_CODENAME:-$(. /etc/os-release && echo "$VERSION_CODENAME")}" 
-  printf 'deb [arch=%s signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/%s %s stable\n' \
-    "$(dpkg --print-architecture)" "$ID" "$CODENAME" > /etc/apt/sources.list.d/docker.list
+  printf 'deb [arch=%s signed-by=%s] https://download.docker.com/linux/%s %s stable\n' \
+    "$(dpkg --print-architecture)" "/etc/apt/keyrings/docker.asc" "$ID" "$CODENAME" > /etc/apt/sources.list.d/docker.list
   apt-get update
   apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
@@ -69,6 +69,7 @@ set_env ACME_EMAIL "$EMAIL"
 set_env MYSQL_PASSWORD "$(openssl rand -hex 32)"
 set_env MYSQL_ROOT_PASSWORD "$(openssl rand -hex 32)"
 chmod 600 "$PROJECT_DIR/.env"
+chmod +x "$PROJECT_DIR/status.sh"
 
 note "Validating and starting Sprey WP Stack"
 cd "$PROJECT_DIR"
@@ -77,4 +78,4 @@ docker compose pull
 docker compose up -d
 
 printf '\nReady. Caddy will obtain HTTPS automatically after DNS for %s reaches this server.\n' "$DOMAIN"
-printf 'Check status with: cd %s && docker compose ps\n' "$PROJECT_DIR"
+printf 'Check stack resources with: cd %s && ./status.sh\n' "$PROJECT_DIR"
