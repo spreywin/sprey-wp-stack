@@ -50,42 +50,29 @@
     applyTheme(themes[(themes.indexOf(current) + 1) % themes.length]);
   });
 
-  // Keep navigation inside this GitHub Pages site in the current tab.
-  // Open links to other origins (Docs, GitHub, etc.) in a new tab.
   document.querySelectorAll('a[href]').forEach((link) => {
     const href = link.getAttribute('href');
     if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
-
     try {
       const target = new URL(link.href, window.location.href);
       if (target.origin !== window.location.origin) {
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
       }
-    } catch {
-      // Leave malformed or non-standard links unchanged.
-    }
+    } catch {}
   });
 
   window.gtranslateSettings = {
     default_language: 'en',
     native_language_names: true,
     wrapper_selector: '.gtranslate_wrapper',
-    flag_style: '3d',
-    switcher_text_color: '#f3f7f5',
-    switcher_arrow_color: '#9caaa2',
-    switcher_border_color: '#20352a',
-    switcher_background_color: '#0d1812',
-    switcher_background_shadow_color: '#07110b',
-    switcher_background_hover_color: '#13251a',
-    dropdown_text_color: '#eef5f0',
-    dropdown_hover_color: '#1c3324',
-    dropdown_background_color: '#0b140e'
+    flag_size: 24,
+    flag_style: '3d'
   };
 
   if (translateWrapper && !document.querySelector('script[data-sprey-gtranslate]')) {
     const script = document.createElement('script');
-    script.src = 'https://cdn.gtranslate.net/widgets/latest/dwf.js';
+    script.src = 'https://cdn.gtranslate.net/widgets/latest/popup.js';
     script.defer = true;
     script.dataset.spreyGtranslate = '';
     document.head.appendChild(script);
