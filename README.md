@@ -1,7 +1,8 @@
 # Sprey WP Stack
 
-> **Product landing:** [spreywin.github.io/sprey-wp-stack](https://spreywin.github.io/sprey-wp-stack/)  
-> **Canonical documentation:** [Sprey Docs](https://docs.sprey.win/stacks/wp-stack/) · [GitHub Pages](https://spreywin.github.io/sprey-docs/stacks/wp-stack/)
+> **Product landing:** [Sprey WP Stack](https://spreywin.github.io/sprey-wp-stack/)  
+> **Sprey Docs:** [docs.sprey.win](https://docs.sprey.win/)  
+> **Stack documentation:** [Sprey WP Stack docs](https://docs.sprey.win/stacks/wp-stack/)
 
 Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keeps the public surface minimal: Caddy is the only service that publishes ports; WordPress, MariaDB, and optional phpMyAdmin stay on private Docker networks.
 
