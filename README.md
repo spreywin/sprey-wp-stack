@@ -1,6 +1,6 @@
 # Sprey WP Stack
 
-> Public documentation is published from `docs/` with GitHub Pages.
+> **Documentation:** [Sprey Docs](https://docs.sprey.win/stacks/wp-stack/) · [Temporary GitHub Pages portal](https://spreywin.github.io/sprey-docs/stacks/wp-stack/)
 
 Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keeps the public surface minimal: Caddy is the only service that publishes ports; WordPress, MariaDB, and optional phpMyAdmin stay on private Docker networks.
 
@@ -112,6 +112,7 @@ Do not run `docker compose down -v` on a live stack: it removes the named volume
 ## Repository conventions
 
 - All public documentation, source comments, UI strings, examples, commit messages and release notes are written in English.
+- Canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs); this repository stays focused on the WP Stack implementation.
 - Copy `.env.example` to `.env`; `.env` never enters Git.
 - Default tags deliberately follow current stable WordPress/PHP and Caddy, plus the MariaDB LTS line.
 - Override an image tag in `.env` only after testing a compatibility exception.
@@ -120,6 +121,6 @@ Do not run `docker compose down -v` on a live stack: it removes the named volume
 
 ## v1.0 scope
 
-Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, GitHub Pages documentation, and the Cloudflare outage-fallback deployment design.
+Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, and the Cloudflare outage-fallback deployment design. Shared architecture and product documentation live in the independent Sprey Docs portal.
 
 Monitoring platforms, VPN/control-plane services, and the BTCPay Server infrastructure itself remain separate projects/services.
