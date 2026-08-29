@@ -3,21 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sprey v1 architecture and roadmap.">
-  <title>Sprey Architecture & Roadmap — Sprey Docs</title>
+  <meta name="description" content="Sprey v1 architecture snapshot from the Sprey WP Stack product site.">
+  <title>Sprey Architecture Snapshot — Sprey WP Stack</title>
   <link rel="stylesheet" href="../style.css">
+  <script src="../site.js" defer></script>
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="../"><span class="brand-mark">S</span><span>Sprey <b>Docs</b></span></a>
-  <nav aria-label="Navigation"><a href="../">Portal</a><a href="#principles">Principles</a><a href="#domains">Domains</a><a href="#stacks">Stacks</a><a href="#roadmap">Roadmap</a><a class="nav-github" href="https://github.com/spreywin" rel="noopener">GitHub ↗</a></nav>
+  <a class="brand" href="../"><span class="brand-mark">S</span><span>Sprey <b>WP Stack</b></span></a>
+  <nav aria-label="Navigation"><a href="../">Landing</a><a href="#principles">Principles</a><a href="#domains">Domains</a><a href="#stacks">Stacks</a><a href="#roadmap">Roadmap</a><a href="https://spreywin.github.io/sprey-docs/architecture/">Canonical Docs ↗</a><a class="nav-github" href="https://github.com/spreywin" rel="noopener">GitHub ↗</a></nav>
 </header>
 <main>
   <section class="hero">
-    <p class="eyebrow">ARCHITECTURE · V1</p>
+    <p class="eyebrow">ARCHITECTURE · V1 SNAPSHOT</p>
     <h1>Sprey platform architecture and roadmap.</h1>
-    <p class="lead">This page is the canonical map of how Sprey products, domains, deployable stacks and infrastructure responsibilities fit together. Planned components are explicitly marked as planned.</p>
-    <div class="hero-actions"><a class="button primary" href="#domains">View domain map</a><a class="button secondary" href="#roadmap">View roadmap</a></div>
+    <p class="lead">This page preserves the original v1 architecture snapshot created with the first Sprey WP Stack documentation. The independent Sprey Docs repository now contains the canonical, continuously maintained architecture.</p>
+    <div class="hero-actions"><a class="button primary" href="https://spreywin.github.io/sprey-docs/architecture/">Open canonical architecture</a><a class="button secondary" href="#roadmap">View this snapshot</a></div>
   </section>
 
   <section id="principles" class="section">
@@ -33,15 +34,14 @@
   </section>
 
   <section id="domains" class="section">
-    <p class="eyebrow">DOMAIN MAP</p><h2>One namespace, clearly separated roles.</h2>
+    <p class="eyebrow">DOMAIN MAP · SNAPSHOT</p><h2>One namespace, clearly separated roles.</h2>
     <div class="cards">
       <article><h3>sprey.win</h3><p><strong>Role:</strong> public website and Store.</p><p><strong>Stack:</strong> Sprey WP Stack.</p><p><strong>Status:</strong> v1.</p></article>
-      <article><h3>pay.sprey.win</h3><p><strong>Role:</strong> BTCPay Server payment infrastructure for Sprey Processing.</p><p><strong>Stack:</strong> BTCPay deployment, separate from WordPress.</p><p><strong>Status:</strong> active infrastructure.</p></article>
-      <article><h3>btcpay.sprey.win</h3><p><strong>Role:</strong> additional BTCPay hostname where required by deployment or migration design.</p><p><strong>Status:</strong> infrastructure alias / deployment-specific.</p></article>
+      <article><h3>pay.sprey.win</h3><p><strong>Role:</strong> BTCPay Server payment infrastructure for Sprey Processing.</p><p><strong>Stack:</strong> BTCPay deployment, separate from WordPress.</p></article>
       <article><h3>app.sprey.win</h3><p><strong>Role:</strong> future customer application and service-management interface.</p><p><strong>Status:</strong> planned.</p></article>
       <article><h3>rpc.sprey.win</h3><p><strong>Role:</strong> Sprey RPC/eRPC gateway for TRON and EVM networks.</p><p><strong>Status:</strong> planned.</p></article>
       <article><h3>status.sprey.win</h3><p><strong>Role:</strong> independent service-status and availability information.</p><p><strong>Status:</strong> planned.</p></article>
-      <article><h3>docs.sprey.win</h3><p><strong>Role:</strong> canonical technical documentation portal.</p><p><strong>Origin:</strong> GitHub Pages.</p><p><strong>Status:</strong> portal active; custom domain planned.</p></article>
+      <article><h3>docs.sprey.win</h3><p><strong>Role:</strong> canonical technical documentation portal.</p><p><strong>Origin:</strong> GitHub Pages.</p></article>
     </div>
   </section>
 
@@ -58,8 +58,8 @@
   <section id="stacks" class="section">
     <p class="eyebrow">STACK MAP</p><h2>Versioned deployment building blocks.</h2>
     <div class="cards">
-      <article><span class="card-number">S1</span><h3>Sprey WP Stack</h3><p>Caddy + WordPress + WooCommerce + MariaDB in Docker Compose. Optional phpMyAdmin remains localhost-only.</p><p><a href="../stacks/wp-stack/">Open stack documentation →</a></p></article>
-      <article><span class="card-number">S2</span><h3>BTCPay Stack</h3><p>Dedicated BTCPay Server deployment for payment infrastructure, including Bitcoin node/NBXplorer/database components as required by the chosen BTCPay deployment.</p><p><strong>Status:</strong> documentation planned.</p></article>
+      <article><span class="card-number">S1</span><h3>Sprey WP Stack</h3><p>Caddy + WordPress + WooCommerce + MariaDB in Docker Compose. Optional phpMyAdmin remains localhost-only.</p><p><a href="../stacks/wp-stack/">Open stack snapshot →</a></p></article>
+      <article><span class="card-number">S2</span><h3>BTCPay Stack</h3><p>Dedicated BTCPay Server deployment for payment infrastructure.</p><p><strong>Status:</strong> documentation planned.</p></article>
       <article><span class="card-number">S3</span><h3>RPC Stack</h3><p>Gateway, provider aggregation, API-key handling, health checks and billing integration for Sprey RPC.</p><p><strong>Status:</strong> planned.</p></article>
       <article><span class="card-number">S4</span><h3>VPN Node Stack</h3><p>Repeatable traffic-node deployment. Nodes are intended to remain replaceable and isolated from the future control plane.</p><p><strong>Status:</strong> planned.</p></article>
     </div>
@@ -86,26 +86,25 @@
   </section>
 
   <section id="roadmap" class="section operations">
-    <p class="eyebrow">ROADMAP · V1</p><h2>Build the foundation in dependency order.</h2>
+    <p class="eyebrow">ROADMAP · V1 SNAPSHOT</p><h2>Build the foundation in dependency order.</h2>
     <div class="command-grid">
-      <div><p>1 · Documentation</p><code>ACTIVE</code><small>Portal, architecture, stack docs, custom domain.</small></div>
-      <div><p>2 · WP Stack</p><code>ACTIVE</code><small>Production hardening, WooCommerce, backups and repeatable operations.</small></div>
-      <div><p>3 · BTCPay integration</p><code>V1</code><small>BTCPay for WooCommerce V2, connection guide and payment test procedure.</small></div>
-      <div><p>4 · Cloudflare failover</p><code>V1</code><small>Strict TLS, dynamic-cache rules, health checks and static outage fallback.</small></div>
-      <div><p>5 · Processing automation</p><code>NEXT</code><small>Plans, subscriptions, webhooks, provisioning and customer lifecycle.</small></div>
-      <div><p>6 · Customer app</p><code>PLANNED</code><small>app.sprey.win and a service-management control plane.</small></div>
-      <div><p>7 · Sprey RPC</p><code>PLANNED</code><small>RPC gateway, API keys, monitoring and billing.</small></div>
-      <div><p>8 · Sprey VPN</p><code>PLANNED</code><small>Control plane plus independently deployed VPN nodes.</small></div>
+      <div><p>1 · Documentation</p><code>ACTIVE</code></div>
+      <div><p>2 · WP Stack</p><code>ACTIVE</code></div>
+      <div><p>3 · BTCPay integration</p><code>V1</code></div>
+      <div><p>4 · Cloudflare failover</p><code>V1</code></div>
+      <div><p>5 · Processing automation</p><code>NEXT</code></div>
+      <div><p>6 · Customer app</p><code>PLANNED</code></div>
+      <div><p>7 · Sprey RPC</p><code>PLANNED</code></div>
+      <div><p>8 · Sprey VPN</p><code>PLANNED</code></div>
     </div>
-    <p class="warning">This roadmap documents architecture and dependency order, not fixed delivery dates. A component remains Planned until it is deployed, tested and documented.</p>
+    <p class="warning">This is a preserved v1 snapshot. Use Sprey Docs for current status and implementation details.</p>
   </section>
 
   <section class="section">
-    <p class="eyebrow">REPOSITORY MODEL</p><h2>One portal can document many repositories.</h2>
-    <p>The current documentation is published from <code>spreywin/sprey-wp-stack</code> because it is the first active stack. The public documentation hierarchy is intentionally product-wide so additional repositories can be introduced without changing the canonical <code>docs.sprey.win</code> information architecture.</p>
-    <p class="note">When the documentation grows beyond the first stacks, its source may be moved into a dedicated documentation repository while preserving the public URL structure.</p>
+    <p class="eyebrow">DOCUMENTATION MODEL</p><h2>The migration is complete.</h2>
+    <p>The first documentation portal was created inside <code>spreywin/sprey-wp-stack</code>. It is intentionally preserved as the WP Stack product site and historical architecture snapshot. Canonical cross-project documentation now lives in the dedicated <code>spreywin/sprey-docs</code> repository.</p>
   </section>
 </main>
-<footer><span>© 2026 Sprey</span><a href="../">Back to Sprey Docs</a></footer>
+<footer><span>© 2026 Sprey</span><a href="https://spreywin.github.io/sprey-docs/architecture/">Canonical Sprey Architecture</a></footer>
 </body>
 </html>
