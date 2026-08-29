@@ -1,0 +1,90 @@
+name: sprey-wp-stack
+
+services:
+  caddy:
+    image: ${CADDY_IMAGE:-caddy:2-alpine}
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      wordpress:
+        condition: service_started
+    networks:
+      - edge
+      - app
+
+  wordpress:
+    # Tracks the newest stable WordPress release on the newest PHP version
+    # currently tested by WooCommerce (PHP 8.4 at this project's release).
+    image: ${WORDPRESS_IMAGE:-wordpress:php8.4-apache}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - wordpress_data:/var/www/html
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    networks:
+      - app
+
+  mariadb:
+    # LTS moves to current security releases without surprise major upgrades.
+    image: ${MARIADB_IMAGE:-mariadb:lts}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      MARIADB_DATABASE: ${MYSQL_DATABASE}
+      MARIADB_USER: ${MYSQL_USER}
+      MARIADB_PASSWORD: ${MYSQL_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    networks:
+      - app
+
+  phpmyadmin:
+    image: ${PHPMYADMIN_IMAGE:-phpmyadmin:latest}
+    profiles: ["admin"]
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: "3306"
+      UPLOAD_LIMIT: 32M
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8081:80"
+    networks:
+      - app
+
+volumes:
+  caddy_data:
+  caddy_config:
+  wordpress_data:
+  mariadb_data:
+
+networks:
+  edge:
+  app:
+    internal: true
