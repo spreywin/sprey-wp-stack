@@ -137,4 +137,25 @@
     script.dataset.spreyGtranslate = '';
     document.head.appendChild(script);
   }
+
+  const scrollToTop = document.createElement('button');
+  scrollToTop.type = 'button';
+  scrollToTop.className = 'scroll-to-top';
+  scrollToTop.setAttribute('aria-label', 'Scroll to top');
+  scrollToTop.title = 'Back to top';
+  scrollToTop.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/></svg>';
+  document.body.appendChild(scrollToTop);
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const updateScrollToTop = () => {
+    scrollToTop.classList.toggle('is-visible', window.scrollY > 420);
+  };
+
+  scrollToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: reducedMotion.matches ? 'auto' : 'smooth' });
+  });
+
+  window.addEventListener('scroll', updateScrollToTop, { passive: true });
+  updateScrollToTop();
+
 })();
