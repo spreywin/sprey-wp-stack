@@ -54,7 +54,8 @@
     default_language: 'en',
     native_language_names: true,
     wrapper_selector: '.gtranslate_wrapper',
-    flag_style: '3d'
+    flag_style: '3d',
+    color_scheme: 'dark'
   };
 
   if (translateWrapper && !document.querySelector('script[data-sprey-gtranslate]')) {
