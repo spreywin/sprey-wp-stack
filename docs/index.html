@@ -3,61 +3,127 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sprey Documentation — products, infrastructure, stacks, integrations and operations.">
+  <meta name="description" content="Sprey WP Stack — a lightweight production-oriented WordPress and WooCommerce stack with Caddy, MariaDB, BTCPay integration guidance, resource checks, and bounded Docker logs.">
   <meta name="theme-color" content="#0b1120">
-  <title>Sprey Documentation</title>
+  <title>Sprey WP Stack</title>
   <link rel="stylesheet" href="./style.css">
+  <script src="./site.js" defer></script>
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="./"><span class="brand-mark">S</span><span>Sprey <b>Docs</b></span></a>
-  <nav aria-label="Navigation"><a href="#products">Products</a><a href="#stacks">Stacks</a><a href="./architecture/">Architecture</a><a href="#operations">Operations</a><a class="nav-github" href="https://github.com/spreywin" rel="noopener">GitHub ↗</a></nav>
+  <a class="brand" href="./"><span class="brand-mark">S</span><span>Sprey <b>WP Stack</b></span></a>
+  <nav aria-label="Navigation">
+    <a href="#stack">Stack</a>
+    <a href="#operations">Operations</a>
+    <a href="./architecture/">Architecture</a>
+    <a href="https://spreywin.github.io/sprey-docs/stacks/wp-stack/">Docs ↗</a>
+    <a class="nav-github" href="https://github.com/spreywin/sprey-wp-stack" rel="noopener">GitHub ↗</a>
+  </nav>
+  <div class="header-tools">
+    <button class="tool-control" type="button" data-theme-toggle data-theme="auto">Theme: Auto</button>
+    <select class="tool-control" data-translate aria-label="Translate page">
+      <option value="en">English</option>
+      <option value="ru">Русский</option>
+      <option value="kk">Қазақша</option>
+      <option value="de">Deutsch</option>
+      <option value="es">Español</option>
+      <option value="fr">Français</option>
+      <option value="pt">Português</option>
+      <option value="tr">Türkçe</option>
+      <option value="zh-CN">简体中文</option>
+      <option value="ja">日本語</option>
+      <option value="ko">한국어</option>
+      <option value="ar">العربية</option>
+    </select>
+  </div>
 </header>
+
 <main id="top">
   <section class="hero">
-    <p class="eyebrow">SPREY DOCUMENTATION</p>
-    <h1>Build, connect and operate the Sprey platform.</h1>
-    <p class="lead">The canonical technical documentation for Sprey products, deployable stacks, payment integrations, infrastructure and operations.</p>
-    <div class="hero-actions"><a class="button primary" href="#stacks">Explore stacks</a><a class="button secondary" href="./architecture/">Architecture & roadmap</a></div>
-    <dl class="quick-facts"><div><dt>Products</dt><dd>Processing · RPC · VPN</dd></div><div><dt>Stacks</dt><dd>reproducible Docker deployments</dd></div><div><dt>One portal</dt><dd>docs.sprey.win</dd></div></dl>
+    <p class="eyebrow">SPREY WP STACK</p>
+    <h1>WordPress infrastructure without a server panel.</h1>
+    <p class="lead">A lightweight, production-oriented Docker Compose stack for WordPress and WooCommerce with Caddy, MariaDB, optional local-only phpMyAdmin, operational safeguards, and a clean path to BTCPay Server integration.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="https://github.com/spreywin/sprey-wp-stack">View on GitHub</a>
+      <a class="button secondary" href="https://spreywin.github.io/sprey-docs/stacks/wp-stack/">Open full documentation</a>
+    </div>
+    <dl class="quick-facts">
+      <div><dt>Minimal perimeter</dt><dd>Caddy is the only public container</dd></div>
+      <div><dt>WooCommerce ready</dt><dd>BTCPay stays separate</dd></div>
+      <div><dt>Operational safety</dt><dd>bounded logs + resource status</dd></div>
+    </dl>
   </section>
 
-  <section id="products" class="section">
-    <p class="eyebrow">PRODUCTS</p><h2>Sprey services.</h2>
+  <section id="stack" class="section">
+    <p class="eyebrow">DEPLOYMENT</p>
+    <h2>Small stack. Clear responsibilities.</h2>
+    <div class="architecture" role="img" aria-label="Sprey WP Stack architecture">
+      <div class="node internet">Internet<br><small>HTTP · HTTPS · HTTP/3</small></div><span class="arrow">↓</span>
+      <div class="node caddy">Caddy<br><small>automatic HTTPS · compression · reverse proxy</small></div><span class="arrow">↓</span>
+      <div class="node wordpress">WordPress + WooCommerce<br><small>private Docker network</small></div><span class="arrow">↓</span>
+      <div class="node database">MariaDB<br><small>persistent private database</small></div>
+    </div>
+    <p class="note">phpMyAdmin is optional, disabled by default, and exposed only on localhost when its admin profile is explicitly started.</p>
+  </section>
+
+  <section class="section split">
+    <div>
+      <p class="eyebrow">QUICK START</p>
+      <h2>From a clean VPS to WordPress.</h2>
+      <p>The installer prepares Docker when needed, creates private credentials, preserves the active SSH port while configuring UFW, starts the stack, and enables the resource status helper.</p>
+    </div>
+    <div class="terminal">
+      <div class="terminal-title"><span></span><span></span><span></span> terminal</div>
+      <pre><code>git clone https://github.com/spreywin/sprey-wp-stack.git
+cd sprey-wp-stack
+sudo ./install.sh example.com admin@example.com</code></pre>
+    </div>
+  </section>
+
+  <section id="operations" class="section">
+    <p class="eyebrow">OPERATIONS</p>
+    <h2>See what the VPS is doing before the disk disappears.</h2>
+    <div class="status-grid">
+      <article><h3>Disk</h3><p>Filesystem usage and inode pressure.</p></article>
+      <article><h3>Memory</h3><p>RAM, swap, uptime, and system load.</p></article>
+      <article><h3>Containers</h3><p>CPU, memory, network, and block I/O snapshot.</p></article>
+      <article><h3>Docker storage</h3><p>Images, containers, volumes, and build cache usage.</p></article>
+    </div>
+    <div class="terminal" style="margin-top:24px">
+      <div class="terminal-title"><span></span><span></span><span></span> status</div>
+      <pre><code>./status.sh
+
+docker system df -v</code></pre>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">LOG SAFETY</p>
+    <h2>Container logs are bounded by default.</h2>
     <div class="cards">
-      <article><span class="card-number">01</span><h3>Sprey Processing</h3><p>Self-hosted crypto payment infrastructure built around BTCPay Server. Customer funds remain under customer control; Sprey provides infrastructure and automation.</p><p><small>Payment host: pay.sprey.win</small></p></article>
-      <article><span class="card-number">02</span><h3>Sprey RPC</h3><p>Planned RPC/eRPC gateway for stable access to TRON and EVM networks, with API keys, availability monitoring and plan-based billing.</p><p><small>Planned: rpc.sprey.win</small></p></article>
-      <article><span class="card-number">03</span><h3>Sprey VPN</h3><p>Planned privacy service with isolated traffic nodes and automated crypto billing. VPN nodes remain separate from payment and web infrastructure.</p></article>
+      <article><span class="card-number">01</span><h3>Local driver</h3><p>The stack uses Docker's local logging driver instead of allowing unbounded default log growth.</p></article>
+      <article><span class="card-number">02</span><h3>10 MB per file</h3><p>Each container log file is capped at 10 MB.</p></article>
+      <article><span class="card-number">03</span><h3>Three files</h3><p>Rotation keeps at most three files per container, preventing logs from silently consuming the whole VPS disk.</p></article>
     </div>
   </section>
 
-  <section id="stacks" class="section">
-    <p class="eyebrow">DEPLOYABLE STACKS</p><h2>Infrastructure that can be reproduced.</h2>
-    <div class="cards">
-      <article><span class="card-number">01</span><h3>Sprey WP Stack</h3><p>WordPress + WooCommerce + Caddy + MariaDB in Docker Compose, with an optional local-only phpMyAdmin profile.</p><p><a href="./stacks/wp-stack/">Open documentation →</a></p></article>
-      <article><span class="card-number">02</span><h3>BTCPay Stack</h3><p>Payment-server deployment and operating conventions for Sprey Processing. Documentation will be separated from the WordPress stack.</p><p><small>Planned documentation</small></p></article>
-      <article><span class="card-number">03</span><h3>VPN Node Stack</h3><p>Repeatable deployment for isolated VPN traffic nodes. Control-plane and traffic-node responsibilities stay separate.</p><p><small>Planned documentation</small></p></article>
-      <article><span class="card-number">04</span><h3>RPC Stack</h3><p>Planned gateway, provider aggregation, health checks, API access and billing components for Sprey RPC.</p><p><small>Planned documentation</small></p></article>
-    </div>
+  <section class="section cloudflare">
+    <div><p class="eyebrow">PAYMENTS & RESILIENCE</p><h2>WooCommerce, BTCPay and Cloudflare stay loosely coupled.</h2></div>
+    <p>BTCPay Server remains separate from the WordPress stack. WooCommerce connects through the current BTCPay integration. The v1 design also keeps a static Cloudflare Pages outage fallback separate from the live WooCommerce origin.</p>
   </section>
 
-  <section id="platform" class="section">
-    <p class="eyebrow">PLATFORM MAP</p><h2>Separate services, one Sprey platform.</h2>
-    <div class="architecture" role="img" aria-label="Sprey platform domains and services">
-      <div class="node internet">sprey.win<br><small>public website and store</small></div><span class="arrow">↓</span>
-      <div class="node caddy">app.sprey.win<br><small>customer application</small></div><span class="arrow">↓</span>
-      <div class="node wordpress">pay.sprey.win · rpc.sprey.win<br><small>payments · RPC services</small></div><span class="arrow">↓</span>
-      <div class="node database">status.sprey.win · docs.sprey.win<br><small>status · documentation</small></div>
+  <section class="section">
+    <p class="eyebrow">DOCUMENTATION</p>
+    <h2>This landing stays here. Canonical docs live separately.</h2>
+    <p class="lead">This GitHub Pages site is the permanent product landing for Sprey WP Stack. Cross-project architecture, products, integrations, operations, and future stacks are maintained in the independent Sprey Docs portal.</p>
+    <div class="hero-actions">
+      <a class="button primary" href="https://spreywin.github.io/sprey-docs/">Sprey Docs</a>
+      <a class="button secondary" href="./architecture/">Architecture snapshot</a>
     </div>
-    <p class="note">The detailed architecture, boundaries and v1 dependency roadmap are maintained on the <a href="./architecture/">Architecture & Roadmap</a> page.</p>
-  </section>
-
-  <section id="operations" class="section operations">
-    <p class="eyebrow">DOCUMENTATION MODEL</p><h2>Designed to grow without moving URLs later.</h2>
-    <div class="command-grid"><div><p>Products</p><code>/products/...</code></div><div><p>Stacks</p><code>/stacks/...</code></div><div><p>Integrations</p><code>/integrations/...</code></div><div><p>Operations</p><code>/operations/...</code></div></div>
-    <p class="warning">Status labels matter: current functionality is documented as current; concepts that are not deployed yet are explicitly marked Planned.</p>
+    <p class="note">English is the canonical landing-page language. The language selector opens a machine-translated view through Google Translate when available in the visitor's region.</p>
   </section>
 </main>
-<footer><span>© 2026 Sprey</span><a href="https://github.com/spreywin">Sprey on GitHub</a></footer>
+
+<footer><span>© 2026 Sprey</span><span><a href="https://github.com/spreywin/sprey-wp-stack">Repository</a> · <a href="https://spreywin.github.io/sprey-docs/">Documentation</a></span></footer>
 </body>
 </html>
