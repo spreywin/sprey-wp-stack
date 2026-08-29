@@ -55,12 +55,20 @@
     native_language_names: true,
     wrapper_selector: '.gtranslate_wrapper',
     flag_style: '3d',
-    color_scheme: 'dark'
+    switcher_text_color: '#f3f7f5',
+    switcher_arrow_color: '#9caaa2',
+    switcher_border_color: '#20352a',
+    switcher_background_color: '#0d1812',
+    switcher_background_shadow_color: '#07110b',
+    switcher_background_hover_color: '#13251a',
+    dropdown_text_color: '#eef5f0',
+    dropdown_hover_color: '#1c3324',
+    dropdown_background_color: '#0b140e'
   };
 
   if (translateWrapper && !document.querySelector('script[data-sprey-gtranslate]')) {
     const script = document.createElement('script');
-    script.src = 'https://cdn.gtranslate.net/widgets/latest/popup.js';
+    script.src = 'https://cdn.gtranslate.net/widgets/latest/dwf.js';
     script.defer = true;
     script.dataset.spreyGtranslate = '';
     document.head.appendChild(script);
