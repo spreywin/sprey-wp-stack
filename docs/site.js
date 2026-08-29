@@ -50,6 +50,23 @@
     applyTheme(themes[(themes.indexOf(current) + 1) % themes.length]);
   });
 
+  // Keep navigation inside this GitHub Pages site in the current tab.
+  // Open links to other origins (Docs, GitHub, etc.) in a new tab.
+  document.querySelectorAll('a[href]').forEach((link) => {
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+    try {
+      const target = new URL(link.href, window.location.href);
+      if (target.origin !== window.location.origin) {
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
+    } catch {
+      // Leave malformed or non-standard links unchanged.
+    }
+  });
+
   window.gtranslateSettings = {
     default_language: 'en',
     native_language_names: true,
