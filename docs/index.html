@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sprey WP Stack — a compact, production-oriented WordPress and WooCommerce stack for a modest VPS.">
+  <meta name="theme-color" content="#0b1120">
+  <title>Sprey WP Stack — Documentation</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Sprey WP Stack"><span class="brand-mark">S</span><span>Sprey <b>WP Stack</b></span></a>
+    <nav aria-label="Navigation"><a href="#start">Start</a><a href="#architecture">Architecture</a><a href="#operations">Operations</a><a href="#btcpay">BTCPay</a><a href="#cloudflare">Cloudflare</a><a class="nav-github" href="https://github.com/spreywin/sprey-wp-stack" rel="noopener">GitHub ↗</a></nav>
+  </header>
+  <main id="top">
+    <section class="hero">
+      <p class="eyebrow">WORDPRESS · WOOCOMMERCE · DOCKER</p>
+      <h1>A website stack, not a server control panel.</h1>
+      <p class="lead">Sprey WP Stack is a lightweight, production-oriented stack for WordPress and WooCommerce: Caddy, WordPress, MariaDB and Docker Compose, without unnecessary services.</p>
+      <div class="hero-actions"><a class="button primary" href="#start">Start installation</a><a class="button secondary" href="#architecture">View architecture</a></div>
+      <dl class="quick-facts"><div><dt>1 command</dt><dd>install on a fresh VPS</dd></div><div><dt>0 panels</dt><dd>less RAM and fewer attack surfaces</dd></div><div><dt>HTTPS</dt><dd>automatic with Caddy</dd></div></dl>
+    </section>
+    <section id="architecture" class="section">
+      <p class="eyebrow">V1.0 ARCHITECTURE</p><h2>Only one service faces the public Internet.</h2>
+      <div class="architecture" role="img" aria-label="Architecture: Internet, Caddy, WordPress and MariaDB">
+        <div class="node internet">Internet<br><small>80 · 443 · HTTP/3</small></div><span class="arrow">↓</span><div class="node caddy">Caddy<br><small>HTTPS · proxy · compression</small></div><span class="arrow">↓</span><div class="node wordpress">WordPress + WooCommerce<br><small>private Docker network</small></div><span class="arrow">↓</span><div class="node database">MariaDB LTS<br><small>private Docker network</small></div>
+      </div>
+      <p class="note">phpMyAdmin is disabled by default. When needed, it is available only through an SSH tunnel on <code>127.0.0.1:8081</code>.</p>
+    </section>
+    <section id="start" class="section split">
+      <div><p class="eyebrow">QUICK START</p><h2>Fresh Ubuntu or Debian VPS.</h2><p>Point the domain DNS record to the server first. Then clone the project and run the installer as root.</p><p>It installs Docker when required, creates a protected <code>.env</code>, configures UFW and starts the containers.</p></div>
+      <div class="terminal" aria-label="Installation commands"><div class="terminal-title"><span></span><span></span><span></span>terminal</div><pre><code>git clone https://github.com/spreywin/sprey-wp-stack.git
+cd sprey-wp-stack
+sudo ./install.sh example.com admin@example.com</code></pre><button class="copy" type="button" data-copy="git clone https://github.com/spreywin/sprey-wp-stack.git&#10;cd sprey-wp-stack&#10;sudo ./install.sh example.com admin@example.com">Copy</button></div>
+    </section>
+    <section class="section cards">
+      <article><span class="card-number">01</span><h3>Secure minimum</h3><p>UFW allows only SSH, HTTP, HTTPS and HTTP/3. The database is never exposed publicly.</p></article>
+      <article><span class="card-number">02</span><h3>Current releases</h3><p>WordPress follows the stable PHP 8.4 image while MariaDB stays on its LTS line.</p></article>
+      <article><span class="card-number">03</span><h3>Simple operations</h3><p>Routine administration uses standard Docker Compose commands over SSH. No Portainer or CloudPanel.</p></article>
+    </section>
+    <section id="operations" class="section operations">
+      <p class="eyebrow">OPERATIONS</p><h2>The three commands used most often.</h2>
+      <div class="command-grid"><div><p>Status</p><code>docker compose ps</code></div><div><p>Caddy logs</p><code>docker compose logs -f caddy</code></div><div><p>Update</p><code>docker compose pull &amp;&amp; docker compose up -d</code></div></div>
+      <p class="warning">Back up the database and <code>wp-content/uploads</code> before upgrading WordPress, WooCommerce or MariaDB. Never run <code>docker compose down -v</code> on a production server.</p>
+    </section>
+    <section id="btcpay" class="section cloudflare"><div><p class="eyebrow">BTCPAY SERVER</p><h2>WooCommerce payments without custody.</h2></div><p>Version 1.0 documents integration with the current BTCPay for WooCommerce V2 plugin. BTCPay Server remains separate payment infrastructure; the WordPress stack only hosts the WooCommerce integration.</p></section>
+    <section id="cloudflare" class="section cloudflare"><div><p class="eyebrow">CLOUDFLARE — V1.0</p><h2>CDN in front. Static outage page behind.</h2></div><p>Use Cloudflare with Full (strict) TLS and bypass caching for cart, checkout, account and WordPress admin routes. Version 1.0 also includes an outage-page design: Cloudflare Pages may serve a static maintenance page when health checks mark the WordPress origin unavailable. It is an outage fallback, never a live WooCommerce replacement.</p></section>
+  </main>
+  <footer><span>© 2026 Sprey WP Stack</span><a href="https://github.com/spreywin/sprey-wp-stack/blob/main/README.md">README on GitHub</a></footer>
+  <script>document.querySelector('.copy').addEventListener('click', async (event) => { await navigator.clipboard.writeText(event.currentTarget.dataset.copy); event.currentTarget.textContent = 'Copied'; setTimeout(() => { event.currentTarget.textContent = 'Copy'; }, 1600); });</script>
+</body>
+</html>
