@@ -2,6 +2,14 @@
   const root = document.documentElement;
   const themes = ['auto', 'light', 'dark'];
 
+  if (!document.querySelector('link[rel="icon"]')) {
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.type = 'image/svg+xml';
+    favicon.href = new URL('favicon.svg', document.currentScript?.src || window.location.href).href;
+    document.head.appendChild(favicon);
+  }
+
   let themeButton = document.querySelector('[data-theme-toggle]');
   let translateWrapper = document.querySelector('.gtranslate_wrapper');
 
