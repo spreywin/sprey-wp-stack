@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sprey v1 architecture and roadmap.">
+  <title>Sprey Architecture & Roadmap — Sprey Docs</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="../"><span class="brand-mark">S</span><span>Sprey <b>Docs</b></span></a>
+  <nav aria-label="Navigation"><a href="../">Portal</a><a href="#principles">Principles</a><a href="#domains">Domains</a><a href="#stacks">Stacks</a><a href="#roadmap">Roadmap</a><a class="nav-github" href="https://github.com/spreywin" rel="noopener">GitHub ↗</a></nav>
+</header>
+<main>
+  <section class="hero">
+    <p class="eyebrow">ARCHITECTURE · V1</p>
+    <h1>Sprey platform architecture and roadmap.</h1>
+    <p class="lead">This page is the canonical map of how Sprey products, domains, deployable stacks and infrastructure responsibilities fit together. Planned components are explicitly marked as planned.</p>
+    <div class="hero-actions"><a class="button primary" href="#domains">View domain map</a><a class="button secondary" href="#roadmap">View roadmap</a></div>
+  </section>
+
+  <section id="principles" class="section">
+    <p class="eyebrow">CORE PRINCIPLES</p><h2>Infrastructure before complexity.</h2>
+    <div class="cards">
+      <article><span class="card-number">01</span><h3>Non-custodial payments</h3><p>Sprey infrastructure must not become the custodian of customer funds. BTCPay is used for payment orchestration and notifications while wallet control remains with the customer.</p></article>
+      <article><span class="card-number">02</span><h3>Separate responsibilities</h3><p>The website, payment infrastructure, RPC services, VPN nodes, monitoring and documentation are separate operational units. A failure in one service should not unnecessarily expose or stop the others.</p></article>
+      <article><span class="card-number">03</span><h3>Minimal public perimeter</h3><p>Only required edge services are exposed publicly. Databases and administration utilities stay on private Docker networks or localhost-only interfaces.</p></article>
+      <article><span class="card-number">04</span><h3>Reproducible stacks</h3><p>Deployments should be represented as versioned Docker Compose stacks and documented procedures instead of undocumented server-panel state.</p></article>
+      <article><span class="card-number">05</span><h3>Automation first</h3><p>Provisioning, billing, access delivery, health checks and routine operations should require as little manual support as practical.</p></article>
+      <article><span class="card-number">06</span><h3>Static docs and fallback</h3><p>Documentation and outage communication should remain available independently from the main application VPS.</p></article>
+    </div>
+  </section>
+
+  <section id="domains" class="section">
+    <p class="eyebrow">DOMAIN MAP</p><h2>One namespace, clearly separated roles.</h2>
+    <div class="cards">
+      <article><h3>sprey.win</h3><p><strong>Role:</strong> public website and Store.</p><p><strong>Stack:</strong> Sprey WP Stack.</p><p><strong>Status:</strong> v1.</p></article>
+      <article><h3>pay.sprey.win</h3><p><strong>Role:</strong> BTCPay Server payment infrastructure for Sprey Processing.</p><p><strong>Stack:</strong> BTCPay deployment, separate from WordPress.</p><p><strong>Status:</strong> active infrastructure.</p></article>
+      <article><h3>btcpay.sprey.win</h3><p><strong>Role:</strong> additional BTCPay hostname where required by deployment or migration design.</p><p><strong>Status:</strong> infrastructure alias / deployment-specific.</p></article>
+      <article><h3>app.sprey.win</h3><p><strong>Role:</strong> future customer application and service-management interface.</p><p><strong>Status:</strong> planned.</p></article>
+      <article><h3>rpc.sprey.win</h3><p><strong>Role:</strong> Sprey RPC/eRPC gateway for TRON and EVM networks.</p><p><strong>Status:</strong> planned.</p></article>
+      <article><h3>status.sprey.win</h3><p><strong>Role:</strong> independent service-status and availability information.</p><p><strong>Status:</strong> planned.</p></article>
+      <article><h3>docs.sprey.win</h3><p><strong>Role:</strong> canonical technical documentation portal.</p><p><strong>Origin:</strong> GitHub Pages.</p><p><strong>Status:</strong> portal active; custom domain planned.</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">PRODUCT MAP</p><h2>Products are not stacks.</h2>
+    <div class="cards">
+      <article><span class="card-number">P1</span><h3>Sprey Processing</h3><p>Hosted BTCPay-based payment infrastructure. Customer wallets remain under customer control. External Lightning nodes may be connected; operating customer funds on Sprey-owned Lightning nodes is not part of the core model.</p></article>
+      <article><span class="card-number">P2</span><h3>Sprey RPC</h3><p>Planned RPC/eRPC service aggregating stable providers for TRON and EVM networks with API keys, health monitoring and plan-based billing.</p></article>
+      <article><span class="card-number">P3</span><h3>Sprey VPN</h3><p>Planned privacy service with isolated VPN traffic nodes and crypto billing. VPN traffic infrastructure stays separate from the web store and payment server.</p></article>
+    </div>
+    <p class="note"><strong>Product</strong> defines what a customer buys. <strong>Stack</strong> defines how an infrastructure component is deployed and operated.</p>
+  </section>
+
+  <section id="stacks" class="section">
+    <p class="eyebrow">STACK MAP</p><h2>Versioned deployment building blocks.</h2>
+    <div class="cards">
+      <article><span class="card-number">S1</span><h3>Sprey WP Stack</h3><p>Caddy + WordPress + WooCommerce + MariaDB in Docker Compose. Optional phpMyAdmin remains localhost-only.</p><p><a href="../stacks/wp-stack/">Open stack documentation →</a></p></article>
+      <article><span class="card-number">S2</span><h3>BTCPay Stack</h3><p>Dedicated BTCPay Server deployment for payment infrastructure, including Bitcoin node/NBXplorer/database components as required by the chosen BTCPay deployment.</p><p><strong>Status:</strong> documentation planned.</p></article>
+      <article><span class="card-number">S3</span><h3>RPC Stack</h3><p>Gateway, provider aggregation, API-key handling, health checks and billing integration for Sprey RPC.</p><p><strong>Status:</strong> planned.</p></article>
+      <article><span class="card-number">S4</span><h3>VPN Node Stack</h3><p>Repeatable traffic-node deployment. Nodes are intended to remain replaceable and isolated from the future control plane.</p><p><strong>Status:</strong> planned.</p></article>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">V1 SERVICE FLOW</p><h2>Store, payment server and customer wallet remain distinct.</h2>
+    <div class="architecture" role="img" aria-label="Customer to Sprey Store to BTCPay to customer wallet flow">
+      <div class="node internet">Customer<br><small>browser</small></div><span class="arrow">↓</span>
+      <div class="node caddy">sprey.win<br><small>WordPress · WooCommerce</small></div><span class="arrow">↓</span>
+      <div class="node wordpress">pay.sprey.win<br><small>BTCPay Server · invoices · webhooks</small></div><span class="arrow">↓</span>
+      <div class="node database">Customer wallet / external node<br><small>fund control stays with customer</small></div>
+    </div>
+    <p class="note">The WooCommerce integration talks to BTCPay Server. BTCPay Server is not embedded into the WordPress stack.</p>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">EDGE & RESILIENCE</p><h2>Cloudflare protects the website without pretending static HTML is WooCommerce.</h2>
+    <div class="cards">
+      <article><h3>Primary origin</h3><p>The WordPress VPS remains the live origin for the Store. Dynamic routes such as cart, checkout, account and WordPress administration must not be cached as static content.</p></article>
+      <article><h3>Static outage origin</h3><p>A Cloudflare Pages project may provide a maintenance/outage page when the primary origin is unavailable.</p></article>
+      <article><h3>Failover boundary</h3><p>The static fallback communicates the outage only. It does not replace WooCommerce checkout, sessions or authenticated customer functionality.</p></article>
+    </div>
+  </section>
+
+  <section id="roadmap" class="section operations">
+    <p class="eyebrow">ROADMAP · V1</p><h2>Build the foundation in dependency order.</h2>
+    <div class="command-grid">
+      <div><p>1 · Documentation</p><code>ACTIVE</code><small>Portal, architecture, stack docs, custom domain.</small></div>
+      <div><p>2 · WP Stack</p><code>ACTIVE</code><small>Production hardening, WooCommerce, backups and repeatable operations.</small></div>
+      <div><p>3 · BTCPay integration</p><code>V1</code><small>BTCPay for WooCommerce V2, connection guide and payment test procedure.</small></div>
+      <div><p>4 · Cloudflare failover</p><code>V1</code><small>Strict TLS, dynamic-cache rules, health checks and static outage fallback.</small></div>
+      <div><p>5 · Processing automation</p><code>NEXT</code><small>Plans, subscriptions, webhooks, provisioning and customer lifecycle.</small></div>
+      <div><p>6 · Customer app</p><code>PLANNED</code><small>app.sprey.win and a service-management control plane.</small></div>
+      <div><p>7 · Sprey RPC</p><code>PLANNED</code><small>RPC gateway, API keys, monitoring and billing.</small></div>
+      <div><p>8 · Sprey VPN</p><code>PLANNED</code><small>Control plane plus independently deployed VPN nodes.</small></div>
+    </div>
+    <p class="warning">This roadmap documents architecture and dependency order, not fixed delivery dates. A component remains Planned until it is deployed, tested and documented.</p>
+  </section>
+
+  <section class="section">
+    <p class="eyebrow">REPOSITORY MODEL</p><h2>One portal can document many repositories.</h2>
+    <p>The current documentation is published from <code>spreywin/sprey-wp-stack</code> because it is the first active stack. The public documentation hierarchy is intentionally product-wide so additional repositories can be introduced without changing the canonical <code>docs.sprey.win</code> information architecture.</p>
+    <p class="note">When the documentation grows beyond the first stacks, its source may be moved into a dedicated documentation repository while preserving the public URL structure.</p>
+  </section>
+</main>
+<footer><span>© 2026 Sprey</span><a href="../">Back to Sprey Docs</a></footer>
+</body>
+</html>
