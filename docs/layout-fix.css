@@ -1,0 +1,30 @@
+/* Hero layout refinement: keep the feature summary as the full-width end of the hero. */
+.hero {
+  padding-bottom: 42px;
+}
+
+.hero-grid {
+  column-gap: 52px;
+  row-gap: 28px;
+}
+
+.feature-strip {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+@media (max-width: 980px) {
+  .hero-grid {
+    row-gap: 24px;
+  }
+}
+
+@media (max-width: 720px) {
+  .hero {
+    padding-bottom: 36px;
+  }
+
+  .hero-grid {
+    row-gap: 20px;
+  }
+}
