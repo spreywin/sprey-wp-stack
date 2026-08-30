@@ -69,10 +69,9 @@
   white-space: nowrap;
 }
 
-.gtranslate_wrapper.tool-control,
-.gtranslate_wrapper.tool-control > *,
-.gtranslate_wrapper.tool-control .gt_switcher-popup,
-.gtranslate_wrapper.tool-control .gt-current-lang {
+.gtranslate_wrapper.tool-control > a:first-child,
+.gtranslate_wrapper.tool-control > button:first-child,
+.gtranslate_wrapper.tool-control > .gt-current-lang {
   display: inline-flex !important;
   align-items: center !important;
   gap: 6px !important;
