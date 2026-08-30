@@ -1,6 +1,6 @@
 # Sprey WP Stack
 
-> **Product landing:** [Sprey WP Stack](https://spreywin.github.io/sprey-wp-stack/)  
+> **Product landing:** [Sprey WP Stack](https://wp-stack.sprey.win/)  
 > **Sprey Docs:** [docs.sprey.win](https://docs.sprey.win/)  
 > **Stack documentation:** [Sprey WP Stack docs](https://docs.sprey.win/stacks/wp-stack/)
 
@@ -14,7 +14,7 @@ Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keep
 - phpMyAdmin: optional and not started by default; it listens only on localhost
 - WooCommerce-ready WordPress deployment
 - BTCPay for WooCommerce V2 integration guidance
-- Cloudflare production guidance and static outage-page failover design
+- Cloudflare Worker request-time failover to a static outage page
 - `status.sh`: disk, inode, RAM, swap, load, container resource, and Docker storage overview
 - bounded Docker logs: local logging driver, 10 MB per file, up to 3 files per container
 
@@ -96,9 +96,13 @@ Cloudflare support is part of the v1.0 deployment scope.
 
 For initial deployment, make sure Caddy can obtain a valid origin certificate. After HTTPS is working, enable the Cloudflare proxy and use **Full (strict)** SSL/TLS mode. Do not cache WooCommerce cart, checkout, account, or WordPress admin routes.
 
-The v1.0 availability design uses the WordPress VPS as the primary origin and a static **Cloudflare Pages outage site** as the passive fallback. A Cloudflare health monitor/load-balancing configuration can route visitors to the outage page when the WordPress origin is unhealthy and return traffic to WordPress after recovery.
+The v1.0 availability design places a **Cloudflare Worker** in front of `sprey.win`. The Worker forwards each request to the primary WordPress VPS. On a network failure, a bounded timeout, or a selected upstream status (`502`, `503`, or `504`), it serves the static `sprey-outage.pages.dev` page instead. Every new request tries the primary again, so normal service returns automatically as soon as the VPS responds successfully.
+
+This is request-time failover on the Workers Free plan, not Cloudflare Load Balancing and not an independent periodic health monitor. An outage is detected only when a visitor request reaches the Worker. Review the current Workers Free limits before production use.
 
 The Pages site is an outage notice only. It must never be presented as a functioning WooCommerce store: cart, checkout, account, order processing and payment flows require the live WordPress origin.
+
+See [`cloudflare/README.md`](cloudflare/README.md) for the Worker source, a test-hostname rollout, production activation, validation, rollback, and operational checks.
 
 ## Optional phpMyAdmin
 
@@ -143,7 +147,7 @@ Do not run `docker compose down -v` on a live stack: it removes the named volume
 
 The repository keeps two public surfaces intentionally:
 
-- the **Sprey WP Stack product landing** stays in this repository under `docs/` and is published at `https://spreywin.github.io/sprey-wp-stack/`;
+- the **Sprey WP Stack product landing** stays in this repository under `docs/` and is published at `https://wp-stack.sprey.win/`;
 - canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs), covering platform architecture, products, stacks, integrations, and operations.
 
 The product landing supports responsive layouts, Light/Dark/Auto themes, and optional machine-translated views while English remains the canonical source.
@@ -159,6 +163,6 @@ The product landing supports responsive layouts, Light/Dark/Auto themes, and opt
 
 ## v1.0 scope
 
-Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, bounded container logging, built-in VPS resource visibility, the product landing, and the Cloudflare outage-fallback deployment design. Shared architecture and product documentation live in the independent Sprey Docs portal.
+Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, bounded container logging, built-in VPS resource visibility, the product landing, and request-time Cloudflare Worker failover to the static outage page. Shared architecture and product documentation live in the independent Sprey Docs portal.
 
 Monitoring platforms, VPN/control-plane services, and the BTCPay Server infrastructure itself remain separate projects/services.
