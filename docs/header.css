@@ -1,0 +1,239 @@
+/* Unified Sprey promo header: sticky, lightweight controls, mobile-safe. */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 70;
+  width: min(1180px, calc(100% - 40px));
+  min-height: 72px;
+  background: color-mix(in srgb, var(--page) 88%, transparent);
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+}
+
+/* GitHub lives with the social controls, so avoid a duplicate nav item. */
+.site-header nav .nav-github {
+  display: none !important;
+}
+
+.header-tools {
+  gap: 8px;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.social-links {
+  gap: 7px;
+}
+
+.social-icon,
+.theme-icon-button,
+.tool-control.theme-icon-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  padding: 0;
+  place-items: center;
+  border: 0 !important;
+  border-radius: 9px;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ink);
+  transition: color .15s ease, background-color .15s ease, transform .15s ease;
+}
+
+.social-icon:hover,
+.theme-icon-button:hover,
+.tool-control.theme-icon-button:hover {
+  border-color: transparent !important;
+  background: color-mix(in srgb, var(--accent) 10%, transparent) !important;
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.social-icon svg,
+.theme-icon-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.gtranslate_wrapper.tool-control {
+  flex: 0 1 auto;
+  min-height: 36px;
+  padding: 0 4px !important;
+  border: 0 !important;
+  border-radius: 9px;
+  background: transparent !important;
+  box-shadow: none !important;
+  white-space: nowrap;
+}
+
+.gtranslate_wrapper.tool-control:hover {
+  background: color-mix(in srgb, var(--accent) 8%, transparent) !important;
+}
+
+.gtranslate_wrapper.tool-control > a,
+.gtranslate_wrapper.tool-control > button,
+.gtranslate_wrapper.tool-control > span,
+.gtranslate_wrapper.tool-control .gt_switcher-popup,
+.gtranslate_wrapper.tool-control .gt-current-lang {
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+@media (max-width: 980px) {
+  .site-header {
+    min-height: 64px;
+    padding: 10px 0;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+
+  .site-header nav {
+    order: initial;
+    width: auto;
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .site-header nav a {
+    white-space: nowrap;
+  }
+
+  .header-tools {
+    width: auto;
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    width: min(100% - 24px, 1180px);
+    gap: 8px;
+  }
+
+  .brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .brand span {
+    font-size: 16px;
+    white-space: nowrap;
+  }
+
+  .brand-logo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .site-header nav {
+    display: none;
+  }
+
+  .header-tools {
+    gap: 4px;
+  }
+
+  .social-links {
+    gap: 3px;
+  }
+
+  .social-icon,
+  .theme-icon-button,
+  .tool-control.theme-icon-button {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+
+  .gtranslate_wrapper.tool-control {
+    min-height: 32px;
+    max-width: 128px;
+    overflow: hidden;
+    padding-inline: 2px !important;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+  .site-header {
+    width: calc(100% - 18px);
+    gap: 5px;
+  }
+
+  .brand {
+    gap: 6px;
+  }
+
+  .brand span {
+    font-size: 14px;
+  }
+
+  .brand-logo {
+    width: 27px;
+    height: 27px;
+  }
+
+  .header-tools,
+  .social-links {
+    gap: 1px;
+  }
+
+  .social-icon,
+  .theme-icon-button,
+  .tool-control.theme-icon-button {
+    width: 29px;
+    height: 29px;
+    min-width: 29px;
+    border-radius: 7px;
+  }
+
+  .social-icon svg,
+  .theme-icon-button svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .gtranslate_wrapper.tool-control {
+    min-height: 29px;
+    max-width: 104px;
+    font-size: 11px;
+  }
+
+  .hero {
+    padding-top: 48px;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 13vw, 58px);
+    overflow-wrap: anywhere;
+  }
+
+  .hero-actions .button {
+    width: 100%;
+    text-align: center;
+  }
+
+  main,
+  footer {
+    width: min(100% - 24px, 1180px);
+  }
+}
+
+@media (max-width: 390px) {
+  .brand span {
+    max-width: 94px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .gtranslate_wrapper.tool-control {
+    max-width: 88px;
+  }
+}
