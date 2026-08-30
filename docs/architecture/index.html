@@ -11,14 +11,14 @@
 <body>
 <header class="site-header">
   <a class="brand" href="../"><span class="brand-mark">S</span><span>Sprey <b>WP Stack</b></span></a>
-  <nav aria-label="Navigation"><a href="../">Landing</a><a href="#principles">Principles</a><a href="#domains">Domains</a><a href="#stacks">Stacks</a><a href="#roadmap">Roadmap</a><a href="https://spreywin.github.io/sprey-docs/architecture/">Canonical Docs ↗</a><a class="nav-github" href="https://github.com/spreywin" rel="noopener">GitHub ↗</a></nav>
+  <nav aria-label="Navigation"><a href="../">Landing</a><a href="#principles">Principles</a><a href="#domains">Domains</a><a href="#stacks">Stacks</a><a href="#roadmap">Roadmap</a><a href="https://docs.sprey.win/architecture/overview/" target="_blank" rel="noopener noreferrer">Canonical Docs ↗</a><a class="nav-github" href="https://github.com/spreywin" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
 </header>
 <main>
   <section class="hero">
     <p class="eyebrow">ARCHITECTURE · V1 SNAPSHOT</p>
     <h1>Sprey platform architecture and roadmap.</h1>
     <p class="lead">This page preserves the original v1 architecture snapshot created with the first Sprey WP Stack documentation. The independent Sprey Docs repository now contains the canonical, continuously maintained architecture.</p>
-    <div class="hero-actions"><a class="button primary" href="https://spreywin.github.io/sprey-docs/architecture/">Open canonical architecture</a><a class="button secondary" href="#roadmap">View this snapshot</a></div>
+    <div class="hero-actions"><a class="button primary" href="https://docs.sprey.win/architecture/overview/" target="_blank" rel="noopener noreferrer">Open canonical architecture</a><a class="button secondary" href="#roadmap">View this snapshot</a></div>
   </section>
 
   <section id="principles" class="section">
@@ -79,9 +79,9 @@
   <section class="section">
     <p class="eyebrow">EDGE & RESILIENCE</p><h2>Cloudflare protects the website without pretending static HTML is WooCommerce.</h2>
     <div class="cards">
-      <article><h3>Primary origin</h3><p>The WordPress VPS remains the live origin for the Store. Dynamic routes such as cart, checkout, account and WordPress administration must not be cached as static content.</p></article>
-      <article><h3>Static outage origin</h3><p>A Cloudflare Pages project may provide a maintenance/outage page when the primary origin is unavailable.</p></article>
-      <article><h3>Failover boundary</h3><p>The static fallback communicates the outage only. It does not replace WooCommerce checkout, sessions or authenticated customer functionality.</p></article>
+      <article><h3>Primary origin</h3><p>A Cloudflare Worker forwards each request to the WordPress VPS. Dynamic routes such as cart, checkout, account and WordPress administration must not be cached as static content.</p></article>
+      <article><h3>Request-time fallback</h3><p>On a network error, bounded timeout, or selected <code>502/503/504</code>, the Worker serves <code>sprey-outage.pages.dev</code>. Each new request tries primary again, providing automatic recovery.</p></article>
+      <article><h3>Failover boundary</h3><p>This is not a periodic health monitor. The static fallback communicates the outage only; it does not replace WooCommerce checkout, sessions, orders, payments, or authenticated functionality.</p></article>
     </div>
   </section>
 
@@ -105,6 +105,6 @@
     <p>The first documentation portal was created inside <code>spreywin/sprey-wp-stack</code>. It is intentionally preserved as the WP Stack product site and historical architecture snapshot. Canonical cross-project documentation now lives in the dedicated <code>spreywin/sprey-docs</code> repository.</p>
   </section>
 </main>
-<footer><span>© 2026 Sprey</span><a href="https://spreywin.github.io/sprey-docs/architecture/">Canonical Sprey Architecture</a></footer>
+<footer><span>© 2026 Sprey</span><a href="https://docs.sprey.win/architecture/overview/" target="_blank" rel="noopener noreferrer">Canonical Sprey Architecture</a></footer>
 </body>
 </html>
