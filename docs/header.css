@@ -16,13 +16,13 @@
 }
 
 .header-tools {
-  gap: 8px;
+  gap: 10px;
   margin-left: auto;
   white-space: nowrap;
 }
 
 .social-links {
-  gap: 7px;
+  gap: 10px;
 }
 
 .social-icon,
@@ -58,6 +58,7 @@
 }
 
 .gtranslate_wrapper.tool-control {
+  position: relative;
   flex: 0 1 auto;
   min-height: 36px;
   padding: 0 4px !important;
@@ -66,6 +67,34 @@
   background: transparent !important;
   box-shadow: none !important;
   white-space: nowrap;
+}
+
+.gtranslate_wrapper.tool-control,
+.gtranslate_wrapper.tool-control > *,
+.gtranslate_wrapper.tool-control .gt_switcher-popup,
+.gtranslate_wrapper.tool-control .gt-current-lang {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+}
+
+.gtranslate_wrapper.tool-control img {
+  flex: 0 0 auto;
+  vertical-align: middle;
+}
+
+.gt_white_content {
+  z-index: 1001 !important;
+  width: min(360px, calc(100vw - 24px)) !important;
+  max-width: calc(100vw - 24px) !important;
+  max-height: min(70vh, 520px) !important;
+  margin: 0 !important;
+  overflow: auto !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 18px 55px rgba(0, 0, 0, .28) !important;
 }
 
 .gtranslate_wrapper.tool-control:hover {
@@ -137,11 +166,11 @@
   }
 
   .header-tools {
-    gap: 4px;
+    gap: 7px;
   }
 
   .social-links {
-    gap: 3px;
+    gap: 7px;
   }
 
   .social-icon,
@@ -155,7 +184,7 @@
   .gtranslate_wrapper.tool-control {
     min-height: 32px;
     max-width: 128px;
-    overflow: hidden;
+    overflow: visible;
     padding-inline: 2px !important;
     font-size: 12px;
   }
@@ -182,7 +211,7 @@
 
   .header-tools,
   .social-links {
-    gap: 1px;
+    gap: 4px;
   }
 
   .social-icon,

@@ -5,7 +5,7 @@
   if (!document.querySelector('link[data-sprey-header-style]')) {
     const headerStyle = document.createElement('link');
     headerStyle.rel = 'stylesheet';
-    headerStyle.href = new URL('header.css', document.currentScript?.src || window.location.href).href;
+    headerStyle.href = new URL('header.css?v=controls-spacing', document.currentScript?.src || window.location.href).href;
     headerStyle.dataset.spreyHeaderStyle = '';
     document.head.appendChild(headerStyle);
   }
@@ -179,6 +179,33 @@
     script.dataset.spreyGtranslate = '';
     document.head.appendChild(script);
   }
+
+  function positionTranslatePopup() {
+    const popup = document.querySelector('.gt_white_content');
+    if (!popup || !translateWrapper) return;
+
+    const control = translateWrapper.getBoundingClientRect();
+    const gutter = 12;
+    const popupWidth = Math.min(360, window.innerWidth - gutter * 2);
+    const left = Math.min(
+      Math.max(gutter, control.right - popupWidth),
+      window.innerWidth - popupWidth - gutter
+    );
+
+    popup.style.setProperty('position', 'fixed', 'important');
+    popup.style.setProperty('width', `${popupWidth}px`, 'important');
+    popup.style.setProperty('left', `${left}px`, 'important');
+    popup.style.setProperty('right', 'auto', 'important');
+    popup.style.setProperty('top', `${Math.min(control.bottom + 8, window.innerHeight - 120)}px`, 'important');
+    popup.style.setProperty('transform', 'none', 'important');
+  }
+
+  translateWrapper?.addEventListener('click', () => {
+    requestAnimationFrame(() => requestAnimationFrame(positionTranslatePopup));
+  });
+  window.addEventListener('resize', positionTranslatePopup);
+  window.addEventListener('scroll', positionTranslatePopup, { passive: true });
+  new MutationObserver(positionTranslatePopup).observe(document.body, { childList: true, subtree: true });
 
   const scrollToTop = document.createElement('button');
   scrollToTop.type = 'button';
