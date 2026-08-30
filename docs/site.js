@@ -38,6 +38,29 @@
     }
   }
 
+  let socialLinks = document.querySelector('.social-links');
+  if (!socialLinks && document.querySelector('.site-header')) {
+    socialLinks = document.createElement('div');
+    socialLinks.className = 'social-links';
+    socialLinks.setAttribute('aria-label', 'Sprey social links');
+    socialLinks.innerHTML = `
+      <a class="social-icon" href="https://x.com/SpreyWin" aria-label="Sprey on X" title="Sprey on X">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+      </a>
+      <a class="social-icon" href="https://t.me/SpreyWin" aria-label="Sprey on Telegram" title="Sprey on Telegram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.944 2.506 18.77 21.49c-.239 1.34-.862 1.667-1.748 1.038l-4.833-3.564-2.333 2.244c-.258.258-.474.474-.973.474l.347-4.925 8.965-8.1c.39-.347-.085-.54-.605-.193L6.51 15.441l-4.77-1.492c-1.038-.324-1.057-1.038.216-1.536L20.603 5.23c.865-.324 1.622.193 1.341 1.276Z"/></svg>
+      </a>`;
+    const tools = document.querySelector('.header-tools');
+    tools?.insertBefore(socialLinks, themeButton || translateWrapper || null);
+  }
+
+  const footer = document.querySelector('footer');
+  if (footer && socialLinks && !footer.querySelector('.footer-social-links')) {
+    const footerSocialLinks = socialLinks.cloneNode(true);
+    footerSocialLinks.classList.add('footer-social-links');
+    footer.appendChild(footerSocialLinks);
+  }
+
   const gtranslateTheme = document.createElement('style');
   gtranslateTheme.dataset.spreyGtranslateTheme = '';
   gtranslateTheme.textContent = `
@@ -98,7 +121,15 @@
 
     if (themeButton) {
       const labels = { auto: 'Theme: Auto', light: 'Theme: Light', dark: 'Theme: Dark' };
-      themeButton.textContent = labels[selected];
+      const icons = {
+        auto: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',
+        light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"/></svg>',
+        dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>'
+      };
+      themeButton.innerHTML = icons[selected];
+      themeButton.classList.add('theme-icon-button');
+      themeButton.setAttribute('aria-label', labels[selected]);
+      themeButton.title = labels[selected];
       themeButton.dataset.theme = selected;
     }
   }

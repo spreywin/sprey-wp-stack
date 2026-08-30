@@ -1,6 +1,6 @@
 # Sprey WP Stack
 
-> **Product landing:** [Sprey WP Stack](https://spreywin.github.io/sprey-wp-stack/)  
+> **Product landing:** [Sprey WP Stack](https://wp-stack.sprey.win/)<br>
 > **Sprey Docs:** [docs.sprey.win](https://docs.sprey.win/)  
 > **Stack documentation:** [Sprey WP Stack docs](https://docs.sprey.win/stacks/wp-stack/)
 
@@ -147,10 +147,12 @@ Do not run `docker compose down -v` on a live stack: it removes the named volume
 
 The repository keeps two public surfaces intentionally:
 
-- the **Sprey WP Stack product landing** stays in this repository under `docs/` and is published at `https://spreywin.github.io/sprey-wp-stack/`;
+- the **Sprey WP Stack product landing** stays in this repository under `docs/` and is published at `https://wp-stack.sprey.win/`;
 - canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs), covering platform architecture, products, stacks, integrations, and operations.
 
 The product landing supports responsive layouts, Light/Dark/Auto themes, and optional machine-translated views while English remains the canonical source.
+
+Follow Sprey on [X](https://x.com/SpreyWin) and [Telegram](https://t.me/SpreyWin).
 
 ## Repository conventions
 
