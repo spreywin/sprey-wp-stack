@@ -1,13 +1,9 @@
-/* Unified Sprey promo header: sticky, lightweight controls, mobile-safe. */
+/* Unified Sprey promo header: lightweight controls, mobile-safe. */
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 70;
+  position: relative;
   width: min(1180px, calc(100% - 40px));
   min-height: 72px;
-  background: color-mix(in srgb, var(--page) 88%, transparent);
-  backdrop-filter: blur(16px) saturate(135%);
-  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  background: transparent;
 }
 
 /* GitHub lives with the social controls, so avoid a duplicate nav item. */
@@ -28,7 +24,7 @@
 .social-icon,
 .theme-icon-button,
 .tool-control.theme-icon-button {
-  display: grid;
+  display: flex;
   width: 36px;
   height: 36px;
   min-width: 36px;
@@ -53,6 +49,8 @@
 
 .social-icon svg,
 .theme-icon-button svg {
+  display: block;
+  margin: auto;
   width: 18px;
   height: 18px;
 }

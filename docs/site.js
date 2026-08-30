@@ -5,7 +5,7 @@
   if (!document.querySelector('link[data-sprey-header-style]')) {
     const headerStyle = document.createElement('link');
     headerStyle.rel = 'stylesheet';
-    headerStyle.href = new URL('header.css?v=native-language-popup', document.currentScript?.src || window.location.href).href;
+    headerStyle.href = new URL('header.css?v=static-header-icons', document.currentScript?.src || window.location.href).href;
     headerStyle.dataset.spreyHeaderStyle = '';
     document.head.appendChild(headerStyle);
   }

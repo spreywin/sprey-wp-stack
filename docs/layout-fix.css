@@ -11,7 +11,7 @@
 .feature-strip {
   grid-column: 1 / -1;
   width: 100%;
-  scroll-margin-top: 96px;
+  scroll-margin-top: 24px;
   padding: 24px;
   column-gap: 22px;
   row-gap: 18px;
@@ -44,7 +44,7 @@
     row-gap: 20px;
   }
 
-  .feature-strip { scroll-margin-top: 76px; padding: 20px; gap: 15px; }
+  .feature-strip { scroll-margin-top: 16px; padding: 20px; gap: 15px; }
   .feature-strip .feature-heading { padding-bottom: 15px; }
   .feature-strip b { font-size: 14px; }
   .feature-strip span { font-size: 13px; }
