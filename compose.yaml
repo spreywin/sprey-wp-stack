@@ -28,9 +28,15 @@ services:
       - app
 
   wordpress:
-    # Tracks the newest stable WordPress release on the newest PHP version
-    # currently tested by WooCommerce (PHP 8.4 at this project's release).
-    image: ${WORDPRESS_IMAGE:-wordpress:php8.4-apache}
+    # Builds on the official WordPress PHP 8.4 image and bundles the tested
+    # WooCommerce + BTCPay for WooCommerce V2 plugin versions.
+    build:
+      context: .
+      dockerfile: Dockerfile.wordpress
+      args:
+        WOOCOMMERCE_VERSION: ${WOOCOMMERCE_VERSION:-11.0.1}
+        BTCPAY_WOOCOMMERCE_VERSION: ${BTCPAY_WOOCOMMERCE_VERSION:-2.8.0}
+    image: ${WORDPRESS_IMAGE:-sprey-wordpress:local}
     restart: unless-stopped
     logging: *default-logging
     env_file: .env
