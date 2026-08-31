@@ -82,19 +82,30 @@ This prevents application and proxy logs from growing without a bound and silent
 
 Sprey WP Stack does not run BTCPay Server inside the WordPress stack. Payment infrastructure remains separate. The official **BTCPay for WooCommerce V2** plugin and WooCommerce itself are bundled into the Sprey WordPress image.
 
+The payment model is deliberately non-custodial:
+
+```text
+WooCommerce order -> BTCPay invoice -> merchant-controlled wallet / payment destination
+                         |
+                         +-> verified invoice/payment state -> WooCommerce order status
+```
+
+WooCommerce owns products, prices, stock, carts, checkout, and orders. BTCPay creates and observes invoice/payment state. The merchant owns the wallet or payment destination. Sprey does not receive, hold, or forward merchant funds.
+
 Recommended deployment flow:
 
 1. Deploy Sprey WP Stack and complete WordPress setup.
 2. Activate WooCommerce and complete its initial store setup.
 3. Activate BTCPay for WooCommerce V2.
 4. Connect the plugin to a BTCPay Server store. For Sprey deployments, `https://pay.sprey.win` is the recommended hosted endpoint.
-5. Run a test payment before accepting production orders.
+5. Configure the BTCPay store with the merchant-controlled wallet or supported external payment destination.
+6. Run a test payment and verify both the WooCommerce order state and receipt at the merchant-controlled destination before accepting production orders.
 
 Canonical connection and testing instructions: [BTCPay for WooCommerce](https://docs.sprey.win/integrations/btcpay-woocommerce/).
 
 For evaluation only, BTCPay Server provides official mainnet and testnet demo instances. See the integration guide above for the current endpoints and limitations.
 
-Do not store BTCPay Server secrets, API keys, wallet seeds, or payment credentials in this repository.
+Do not store BTCPay Server secrets, API keys, wallet seeds, private spending keys, or payment credentials in this repository. For Sprey-hosted BTCPay, custody must remain with the merchant.
 
 ## Cloudflare and outage fallback
 
