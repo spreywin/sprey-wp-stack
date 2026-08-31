@@ -10,10 +10,10 @@ Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keep
 
 - Caddy: automatic HTTPS, HTTP/3, compression, reverse proxy
 - WordPress + Apache: the public site
+- WooCommerce: bundled in the Sprey WordPress image
+- BTCPay for WooCommerce V2: bundled in the Sprey WordPress image
 - MariaDB: persistent WordPress database
 - phpMyAdmin: optional and not started by default; it listens only on localhost
-- WooCommerce-ready WordPress deployment
-- BTCPay for WooCommerce V2 integration guidance
 - Cloudflare Worker request-time failover to a static outage page
 - `status.sh`: disk, inode, RAM, swap, load, container resource, and Docker storage overview
 - bounded Docker logs: local logging driver, 10 MB per file, up to 3 files per container
@@ -34,7 +34,7 @@ cd sprey-wp-stack
 sudo ./install.sh example.com admin@example.com
 ```
 
-The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, enables the resource status helper, and starts the stack. It uses the port of the active SSH connection, falling back to `sshd`'s effective configuration only when run from a provider console. It refuses to replace an existing `.env` or run on an unsupported system.
+The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, builds the WordPress image with the tested WooCommerce and BTCPay plugin versions, enables the resource status helper, and starts the stack. It uses the port of the active SSH connection, falling back to `sshd`'s effective configuration only when run from a provider console. It refuses to replace an existing `.env` or run on an unsupported system.
 
 ## Manual start
 
@@ -45,11 +45,13 @@ cp .env.example .env
 chmod 600 .env
 # Edit DOMAIN, ACME_EMAIL and all password fields in .env.
 docker compose config --quiet
+docker compose pull --ignore-buildable
+docker compose build wordpress
 docker compose up -d
 docker compose ps
 ```
 
-Open `https://YOUR_DOMAIN` and complete the WordPress installer. Caddy obtains and renews certificates automatically once DNS and firewall settings are correct.
+Open `https://YOUR_DOMAIN` and complete the WordPress installer. Caddy obtains and renews certificates automatically once DNS and firewall settings are correct. WooCommerce and BTCPay for WooCommerce V2 are then available to activate without a separate download.
 
 ## Resource and disk status
 
@@ -78,15 +80,19 @@ This prevents application and proxy logs from growing without a bound and silent
 
 ## BTCPay Server and WooCommerce
 
-Sprey WP Stack does not run BTCPay Server inside the WordPress stack. Payment infrastructure remains separate. WooCommerce connects to an existing BTCPay Server instance with the current **BTCPay for WooCommerce V2** integration.
+Sprey WP Stack does not run BTCPay Server inside the WordPress stack. Payment infrastructure remains separate. The official **BTCPay for WooCommerce V2** plugin and WooCommerce itself are bundled into the Sprey WordPress image.
 
 Recommended deployment flow:
 
 1. Deploy Sprey WP Stack and complete WordPress setup.
-2. Install and activate WooCommerce.
-3. Install the current BTCPay for WooCommerce V2 plugin.
-4. Connect the plugin to the intended BTCPay Server store using the integration flow provided by BTCPay Server.
+2. Activate WooCommerce and complete its initial store setup.
+3. Activate BTCPay for WooCommerce V2.
+4. Connect the plugin to a BTCPay Server store. For Sprey deployments, `https://pay.sprey.win` is the recommended hosted endpoint.
 5. Run a test payment before accepting production orders.
+
+Canonical connection and testing instructions: [BTCPay for WooCommerce](https://docs.sprey.win/integrations/btcpay-woocommerce/).
+
+For evaluation only, BTCPay Server provides official mainnet and testnet demo instances. See the integration guide above for the current endpoints and limitations.
 
 Do not store BTCPay Server secrets, API keys, wallet seeds, or payment credentials in this repository.
 
@@ -131,8 +137,9 @@ docker compose ps
 ./status.sh
 docker compose logs -f caddy
 
-# Update images and recreate containers. Review release notes first.
-docker compose pull
+# Update external images and rebuild the storefront. Review release notes first.
+docker compose pull --ignore-buildable
+docker compose build wordpress
 docker compose up -d
 
 # Database dump (create the backups directory first)
@@ -157,12 +164,13 @@ The product landing supports responsive layouts, Light/Dark/Auto themes, and opt
 - All canonical public documentation, source comments, UI strings, examples, commit messages and release notes are written in English.
 - Copy `.env.example` to `.env`; `.env` never enters Git.
 - Default tags deliberately follow current stable WordPress/PHP and Caddy, plus the MariaDB LTS line.
-- Override an image tag in `.env` only after testing a compatibility exception.
+- WooCommerce and BTCPay plugin versions are explicit build arguments in `.env` so upgrades are intentional and testable.
+- Override an image tag or bundled plugin version only after testing a compatibility exception or upgrade.
 - Use a fork or a template repository for each deployment; configuration and runtime data remain outside version control.
 - Back up both the MariaDB database and WordPress uploads before upgrades.
 
 ## v1.0 scope
 
-Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, BTCPay for WooCommerce integration guidance, bounded container logging, built-in VPS resource visibility, the product landing, and request-time Cloudflare Worker failover to the static outage page. Shared architecture and product documentation live in the independent Sprey Docs portal.
+Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, bundled WooCommerce and BTCPay for WooCommerce V2, bounded container logging, built-in VPS resource visibility, the product landing, and request-time Cloudflare Worker failover to the static outage page. Shared architecture and product documentation live in the independent Sprey Docs portal.
 
 Monitoring platforms, VPN/control-plane services, and the BTCPay Server infrastructure itself remain separate projects/services.
