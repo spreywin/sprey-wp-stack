@@ -74,8 +74,10 @@ chmod +x "$PROJECT_DIR/status.sh"
 note "Validating and starting Sprey WP Stack"
 cd "$PROJECT_DIR"
 docker compose config --quiet
-docker compose pull
+docker compose pull --ignore-buildable
+docker compose build wordpress
 docker compose up -d
 
 printf '\nReady. Caddy will obtain HTTPS automatically after DNS for %s reaches this server.\n' "$DOMAIN"
+printf 'WooCommerce and BTCPay for WooCommerce V2 are bundled and ready to activate after WordPress setup.\n'
 printf 'Check stack resources with: cd %s && ./status.sh\n' "$PROJECT_DIR"
