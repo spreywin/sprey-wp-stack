@@ -1,0 +1,14 @@
+FROM wordpress:php8.4-apache
+
+ARG WOOCOMMERCE_VERSION=11.0.1
+ARG BTCPAY_WOOCOMMERCE_VERSION=2.8.0
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates curl unzip; \
+    curl -fsSL "https://downloads.wordpress.org/plugin/woocommerce.${WOOCOMMERCE_VERSION}.zip" -o /tmp/woocommerce.zip; \
+    curl -fsSL "https://downloads.wordpress.org/plugin/btcpay-greenfield-for-woocommerce.${BTCPAY_WOOCOMMERCE_VERSION}.zip" -o /tmp/btcpay.zip; \
+    unzip -q /tmp/woocommerce.zip -d /usr/src/wordpress/wp-content/plugins; \
+    unzip -q /tmp/btcpay.zip -d /usr/src/wordpress/wp-content/plugins; \
+    rm -f /tmp/woocommerce.zip /tmp/btcpay.zip; \
+    rm -rf /var/lib/apt/lists/*
