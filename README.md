@@ -6,6 +6,8 @@
 
 Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keeps the public surface minimal: Caddy is the only service that publishes ports; WordPress, MariaDB, and optional phpMyAdmin stay on private Docker networks.
 
+Sprey WP Stack is an **online storefront integration path** for Sprey's broader **non-custodial crypto acquiring** model. Sprey Processing is intended for businesses accepting crypto payments both online and in person; WooCommerce is one merchant-facing integration, not the boundary of the payment product.
+
 ## Included
 
 - Caddy: automatic HTTPS, HTTP/3, compression, reverse proxy
