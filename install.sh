@@ -42,11 +42,13 @@ docker compose version >/dev/null || fail "Docker Compose v2 is required."
 
 note "Configuring firewall"
 # The live connection is the safest source: it preserves a non-standard port.
-# If the script is run from the provider console, use sshd's effective config.
+# If sudo removes SSH_CONNECTION or the script runs from a provider console,
+# use sshd's effective config. Read the full output so pipefail cannot turn
+# sshd's SIGPIPE into a false installer failure.
 SSH_PORT="${SSH_CONNECTION-}"
 SSH_PORT="${SSH_PORT##* }"
 if [[ ! "$SSH_PORT" =~ ^[0-9]+$ ]]; then
-  SSH_PORT="$(sshd -T 2>/dev/null | awk '/^port / { print $2; exit }')"
+  SSH_PORT="$(sshd -T 2>/dev/null | awk '/^port / && !found { print $2; found=1 }')"
 fi
 [[ "$SSH_PORT" =~ ^[0-9]+$ ]] && (( SSH_PORT >= 1 && SSH_PORT <= 65535 )) || \
   fail "Cannot determine the active SSH port; UFW was not changed."
