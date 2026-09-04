@@ -22,9 +22,21 @@ Sprey WP Stack is an **online storefront integration path** for Sprey's broader 
 
 ## Requirements
 
-- A Linux VPS with Docker Engine and Docker Compose v2
+- For automatic installation: a fresh supported Ubuntu or Debian VPS; Docker Engine and Docker Compose v2 do not need to be preinstalled because the installer installs them when absent
 - A domain with `A` (and, if used, `AAAA`) records pointing to the VPS
 - Firewall allowing TCP `80`, TCP `443`, and UDP `443`; SSH should be restricted to your own IP or VPN
+
+## Before installation
+
+On a fresh VPS, update installed packages first:
+
+```bash
+sudo apt update
+sudo apt upgrade -y
+test -f /var/run/reboot-required && sudo reboot
+```
+
+If the VPS reboots, reconnect before continuing.
 
 ## One-command install (Ubuntu/Debian)
 
@@ -36,7 +48,7 @@ cd sprey-wp-stack
 sudo ./install.sh example.com admin@example.com
 ```
 
-The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, builds the WordPress image with the tested WooCommerce and BTCPay plugin versions, enables the resource status helper, and starts the stack. It uses the port of the active SSH connection, falling back to `sshd`'s effective configuration only when run from a provider console. It refuses to replace an existing `.env` or run on an unsupported system.
+The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, builds the WordPress image with the tested WooCommerce and BTCPay plugin versions, enables the resource status helper, and starts the stack. It uses the port of the active SSH connection when available; when `sudo` does not preserve `SSH_CONNECTION`, it falls back to `sshd`'s effective configuration. It refuses to replace an existing `.env` or run on an unsupported system.
 
 ## Manual start
 
