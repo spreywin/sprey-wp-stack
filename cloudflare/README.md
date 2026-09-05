@@ -74,7 +74,7 @@ Also verify that Cloudflare cache rules bypass `/cart*`, `/checkout*`, `/my-acco
 
 ## Verified production failover
 
-The production `sprey.win/*` Workers Route has been verified with a controlled Caddy stop/start cycle.
+The production `sprey.win/*` Workers Route has been verified with several controlled origin interruptions.
 
 The verified sequence was:
 
@@ -82,8 +82,9 @@ The verified sequence was:
 2. Stopping Caddy caused Cloudflare to return `521`, confirming that origin-unavailable failures must be included in the failover status set.
 3. With `521` handled by the Worker, `sprey.win` returned the static `sprey-outage.pages.dev` page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`.
 4. Starting Caddy restored the next request to the normal WordPress origin with HTTP `200` and no `X-Sprey-Failover` header.
+5. The same failover-and-recovery behavior was verified during a normal VPS reboot and during a VPS hard reboot.
 
-This verifies both production failover and automatic recovery without a DNS change.
+These tests verify both service-level and full-origin failover, plus automatic recovery without a DNS change.
 
 ## Rollback
 
@@ -94,7 +95,7 @@ Remove or disable only the `sprey.win/*` Workers Route. With the existing proxie
 - Treat a rise in fallback responses as an incident signal, not as proof that the whole VPS is down.
 - Inspect the WordPress, Caddy, database, network, and Worker logs before changing failure criteria.
 - Keep the static outage page independent from WordPress and free of store-like controls.
-- Test failover after material Worker, Cloudflare, Caddy, DNS, or fallback-page changes.
+- Test failover after material Worker, Cloudflare, Caddy, DNS, VPS, or fallback-page changes.
 - Review Cloudflare's current Workers limits and pricing before traffic approaches the Free-plan allowance.
 
 Cloudflare references: <a href="https://developers.cloudflare.com/workers/configuration/routing/routes/" target="_blank" rel="noopener noreferrer">Workers Routes</a>, <a href="https://developers.cloudflare.com/workers/platform/limits/" target="_blank" rel="noopener noreferrer">Workers limits</a>, and <a href="https://developers.cloudflare.com/cache/how-to/cache-rules/" target="_blank" rel="noopener noreferrer">Cache Rules</a>.
