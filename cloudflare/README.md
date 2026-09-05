@@ -7,7 +7,7 @@ visitor -> Cloudflare Worker -> primary WordPress VPS
                             \-> sprey-outage.pages.dev on failure
 ```
 
-The Worker attempts the primary origin for every request. It serves the static fallback after a network error, a five-second timeout, or an upstream `502`, `503`, or `504`. The next visitor request tries the primary again, which provides automatic recovery without a DNS change.
+The Worker attempts the primary origin for every request. It serves the static fallback after a network error, a five-second timeout, or an upstream `502`, `503`, `504`, or `521`. The next visitor request tries the primary again, which provides automatic recovery without a DNS change.
 
 This is not an independent health monitor. It does not probe the VPS periodically, keep shared health state, or fail over before a visitor arrives. It also does not make the outage page a WooCommerce replacement: cart, checkout, accounts, orders, sessions, and payments remain unavailable while WordPress is down.
 
@@ -33,7 +33,7 @@ The Worker preserves the incoming method, body, path, query, cookies, and header
 
 ## 2. Test on an isolated hostname
 
-Use a temporary hostname such as `failover-test.sprey.win` before touching production:
+Use a temporary hostname such as `failover-test.sprey.win` before touching production when the production storefront must remain uninterrupted:
 
 1. Add a proxied DNS record for the test hostname that resolves to the same WordPress VPS as `sprey.win`.
 2. Confirm Caddy accepts the test hostname and presents a valid certificate. Remove this hostname from Caddy after testing if it is not intended to remain available.
@@ -43,15 +43,16 @@ Use a temporary hostname such as `failover-test.sprey.win` before touching produ
 6. In a controlled maintenance window, make only the test hostname's origin path return `503`, or briefly block that test path at the origin. Verify the response is the static outage page, has status `503`, and includes `X-Sprey-Failover: static-outage-page`.
 7. Restore the test origin and verify the next request immediately returns WordPress again.
 
-Do not stop the production WordPress service merely to test failover. Do not change the production DNS record during this test.
+Do not change the production DNS record during this test.
 
 ## 3. Enable production
 
 1. Reconfirm the Worker code and fallback page in the Cloudflare dashboard.
 2. Add the production Workers Route `sprey.win/*` to `sprey-store-failover`.
 3. Leave the existing proxied DNS record pointing to the WordPress VPS. The route runs before that origin and `fetch(request)` continues to it.
-4. Test the home page, a product page, cart, checkout, account, WordPress administration, and static assets.
-5. Check the Worker's logs and analytics for exceptions, timeouts, unexpected `502/503/504` responses, and Free-plan usage.
+4. Use **Fail open (proceed)** for the route failure mode so a Worker execution failure does not block a healthy origin.
+5. Test the home page, a product page, cart, checkout, account, WordPress administration, and static assets.
+6. Check the Worker's logs and analytics for exceptions, timeouts, unexpected `502/503/504/521` responses, and Free-plan usage.
 
 ## Validation
 
@@ -70,6 +71,19 @@ X-Sprey-Failover: fallback-unavailable
 ```
 
 Also verify that Cloudflare cache rules bypass `/cart*`, `/checkout*`, `/my-account*`, `/wp-admin*`, `/wp-login.php*`, WooCommerce API endpoints, authenticated sessions, and requests carrying WooCommerce cart/session cookies.
+
+## Verified production failover
+
+The production `sprey.win/*` Workers Route has been verified with a controlled Caddy stop/start cycle.
+
+The verified sequence was:
+
+1. Healthy origin returned HTTP `200` through Caddy with no `X-Sprey-Failover` header.
+2. Stopping Caddy caused Cloudflare to return `521`, confirming that origin-unavailable failures must be included in the failover status set.
+3. With `521` handled by the Worker, `sprey.win` returned the static `sprey-outage.pages.dev` page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`.
+4. Starting Caddy restored the next request to the normal WordPress origin with HTTP `200` and no `X-Sprey-Failover` header.
+
+This verifies both production failover and automatic recovery without a DNS change.
 
 ## Rollback
 
