@@ -85,9 +85,24 @@ Verified results from the current clean test:
 
 On the verified 10 GB test VPS, the completed fresh install used about 71% of the root filesystem and left about 2.8 GB free. This confirms that the stack fits for testing but has limited storage headroom for production growth.
 
-## Manual start — pending verification
+## Manual start — verified on ARM64
 
-The manual path remains documented for reference, but it is **not yet re-verified against the current installer/network/swap/storage behavior**. Do not mark it production-verified until the complete manual path has been tested on a clean VPS.
+The manual Compose path has been verified end to end on a separate clean Ubuntu 26.04.1 LTS ARM64 host.
+
+Verified test host:
+
+- architecture `aarch64`
+- kernel `7.0.0-1010-oracle`
+- 2 OCPU
+- approximately 12 GB RAM
+- 99 GB boot volume
+- Docker `29.1.3`
+- Docker Compose `2.40.3`
+- no swap configured during the manual test
+
+The manual path assumes the host prerequisites already exist. Before running the Compose sequence, update the OS, install Docker Engine and Docker Compose v2, configure the host/cloud firewall for the active SSH port plus TCP 80, TCP 443, and UDP 443, and point the deployment hostname to the server.
+
+Then run:
 
 ```bash
 git clone https://github.com/spreywin/sprey-wp-stack.git
@@ -103,6 +118,22 @@ docker compose ps
 ```
 
 Open `https://YOUR_DOMAIN` and complete the standard WordPress setup.
+
+The verified ARM64 manual test confirmed:
+
+- Compose validation returned exit code `0`;
+- Caddy, MariaDB, and the custom WordPress image pulled/built as `linux/arm64`;
+- the WordPress image built successfully on ARM64;
+- MariaDB became healthy;
+- HTTP redirected to HTTPS and Caddy obtained a valid Let's Encrypt certificate;
+- HTTP/1.1, HTTP/2, and the HTTP/3 listener were enabled;
+- WordPress completed normal installation and final Site Health had no critical issues;
+- WooCommerce `11.1.0` and BTCPay For WooCommerce V2 `2.8.2` were present and activated successfully;
+- expected WooCommerce tables were created;
+- phpMyAdmin `latest` pulled as `linux/arm64`, started localhost-only on `127.0.0.1:8081`, and returned local HTTP `200`;
+- after a normal host reboot, Caddy, WordPress, and MariaDB returned automatically, MariaDB was healthy, the public site returned HTTP `200`, and WordPress/database state persisted.
+
+Canonical verification record: [WP Stack verification — 2026-09-07](https://docs.sprey.win/operations/wp-stack-verification-2026-09-07/).
 
 ## Resource and disk status
 
@@ -181,7 +212,16 @@ See [`cloudflare/README.md`](cloudflare/README.md) for rollout, validation, roll
 
 ## Optional phpMyAdmin
 
-phpMyAdmin is intentionally off by default and bound only to `127.0.0.1:8081`. The SSH-tunnel access and MariaDB login path are verified; the full stop/start/reboot lifecycle is still being checked.
+phpMyAdmin is intentionally off by default and bound only to `127.0.0.1:8081`.
+
+Verified behavior includes:
+
+- localhost-only publishing;
+- SSH-tunnel access and MariaDB login path;
+- stop/start lifecycle;
+- ARM64 image/start behavior (`linux/arm64`) with local HTTP `200`.
+
+In the verified ARM64 reboot test, phpMyAdmin was intentionally stopped/removed before reboot because it is an optional maintenance service. phpMyAdmin-active reboot behavior therefore remains explicitly unverified.
 
 Use the canonical operations guide for start commands, SSH tunneling, password retrieval, login choices, and security notes:
 
@@ -213,7 +253,11 @@ Do not run `docker compose down -v` on a live stack: it removes named volumes co
 
 ## Update behavior
 
-A new WordPress image build downloads the current stable WooCommerce and BTCPay for WooCommerce V2 releases. Existing site data lives in the persistent `wordpress_data` volume. Before production use, the update/rebuild path must also be tested explicitly to confirm that plugins updated later inside WordPress are not rolled back by a container rebuild/recreate.
+A new WordPress image build downloads the current stable WooCommerce and BTCPay for WooCommerce V2 releases. Existing site data lives in the persistent `wordpress_data` volume.
+
+The rebuild/recreate path has been explicitly verified with existing plugin files in that persistent volume. A temporary marker plus SHA-256 baselines for WooCommerce `11.1.0` and BTCPay For WooCommerce V2 `2.8.2` survived a WordPress image rebuild and force-recreate unchanged; MariaDB remained healthy and the public site returned HTTP `200`.
+
+This verifies that existing plugin files in `wordpress_data` are preserved across WordPress image rebuild/recreate. It does **not** claim a rollback test after an in-admin upgrade to a newer upstream plugin version, because no newer plugin release was available during that test.
 
 ## Documentation and verification rule
 
@@ -223,4 +267,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-Current items still requiring explicit verification include manual setup, the phpMyAdmin stop/start/reboot lifecycle, controlled `526` failover, and rebuild behavior after in-admin plugin updates.
+Current items still requiring explicit verification include phpMyAdmin-active reboot behavior, controlled `526` failover, and a real BTCPay payment integration flow. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
