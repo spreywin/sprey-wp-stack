@@ -28,14 +28,11 @@ services:
       - app
 
   wordpress:
-    # Builds on the official WordPress PHP 8.4 image and bundles the tested
-    # WooCommerce + BTCPay for WooCommerce V2 plugin versions.
+    # Builds on the moving official WordPress PHP 8.4 image and bundles the
+    # current stable WooCommerce + BTCPay for WooCommerce V2 releases.
     build:
       context: .
       dockerfile: Dockerfile.wordpress
-      args:
-        WOOCOMMERCE_VERSION: ${WOOCOMMERCE_VERSION:-11.0.1}
-        BTCPAY_WOOCOMMERCE_VERSION: ${BTCPAY_WOOCOMMERCE_VERSION:-2.8.0}
     image: ${WORDPRESS_IMAGE:-sprey-wordpress:local}
     restart: unless-stopped
     logging: *default-logging
@@ -51,6 +48,7 @@ services:
       mariadb:
         condition: service_healthy
     networks:
+      - edge
       - app
 
   mariadb:
