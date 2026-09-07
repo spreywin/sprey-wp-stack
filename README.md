@@ -179,23 +179,15 @@ Production failover is verified for the full-origin outage path, including Caddy
 
 See [`cloudflare/README.md`](cloudflare/README.md) for rollout, validation, rollback, and the exact verification boundary.
 
-## Optional phpMyAdmin — pending verification
+## Optional phpMyAdmin
 
-phpMyAdmin is intentionally off by default and bound only to `127.0.0.1:8081` when started.
+phpMyAdmin is intentionally off by default and bound only to `127.0.0.1:8081`. The SSH-tunnel access and MariaDB login path are verified; the full stop/start/reboot lifecycle is still being checked.
 
-```bash
-docker compose --profile admin up -d phpmyadmin
-# On your own computer:
-ssh -L 8081:127.0.0.1:8081 root@YOUR_SERVER
-```
+Use the canonical operations guide for start commands, SSH tunneling, password retrieval, login choices, and security notes:
 
-Then open `http://localhost:8081` locally. Stop it when finished:
+[WP Stack phpMyAdmin access](https://docs.sprey.win/operations/wp-stack-phpmyadmin/)
 
-```bash
-docker compose --profile admin stop phpmyadmin
-```
-
-This current phpMyAdmin flow still needs a fresh verification pass before being marked verified.
+Do not open TCP `8081` publicly.
 
 ## Operations
 
@@ -231,4 +223,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-Current items still requiring explicit verification include manual setup, phpMyAdmin, controlled `526` failover, and rebuild behavior after in-admin plugin updates.
+Current items still requiring explicit verification include manual setup, the phpMyAdmin stop/start/reboot lifecycle, controlled `526` failover, and rebuild behavior after in-admin plugin updates.
