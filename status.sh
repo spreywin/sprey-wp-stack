@@ -38,12 +38,23 @@ uptime
 
 section "Filesystem usage"
 df -hT /
+ROOT_USED_PERCENT="$(df -P / | awk 'NR == 2 { gsub(/%/, "", $5); print $5 }')"
+if [[ "$ROOT_USED_PERCENT" =~ ^[0-9]+$ ]] && (( ROOT_USED_PERCENT >= 80 )); then
+  printf 'WARNING: root filesystem is %s%% used; investigate storage before upgrades or rebuilds.\n' "$ROOT_USED_PERCENT"
+fi
 
 section "Filesystem inode usage"
 df -ih /
 
 section "Memory and swap"
 free -h
+
+section "Runtime storage directories"
+for path in /var/lib/containerd /var/lib/docker; do
+  if [[ -d "$path" ]]; then
+    du -sh "$path" 2>/dev/null || true
+  fi
+done
 
 if command -v docker >/dev/null 2>&1; then
   section "Compose services"
