@@ -72,25 +72,26 @@ X-Sprey-Failover: fallback-unavailable
 
 Also verify that Cloudflare cache rules bypass `/cart*`, `/checkout*`, `/my-account*`, `/wp-admin*`, `/wp-login.php*`, WooCommerce API endpoints, authenticated sessions, and requests carrying WooCommerce cart/session cookies.
 
-## Verified production failover
+## Verified failover behavior
 
-The production `sprey.win/*` Workers Route has been verified with several controlled origin interruptions.
+The production `sprey.win/*` Workers Route and an isolated proxied test route have been used for controlled origin-failure verification.
 
-The verified sequence includes:
+Verified behavior includes:
 
 1. Healthy origin returned HTTP `200` through Caddy with no `X-Sprey-Failover` header.
 2. Stopping Caddy caused Cloudflare to return `521`.
-3. With `521` handled by the Worker, `sprey.win` returned the static `sprey-outage.pages.dev` page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`.
+3. With `521` handled by the Worker, the public route returned the static `sprey-outage.pages.dev` page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`.
 4. Starting Caddy restored the next request to the normal WordPress origin with HTTP `200` and no `X-Sprey-Failover` header.
 5. The same failover-and-recovery behavior was verified during a normal VPS reboot and during a VPS hard reboot.
-6. A controlled TLS-handshake failure was created by stopping Caddy and temporarily binding a non-TLS listener to origin port `443`. Through the production Worker route, `sprey.win` returned the static outage page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page` rather than Cloudflare's default TLS error page.
-7. After the temporary listener was removed and Caddy was restarted, the next request returned normal WordPress as HTTP `200` with no `X-Sprey-Failover` header.
+6. A controlled TLS-handshake failure was created by stopping Caddy and temporarily binding a non-TLS listener to origin port `443`. This verified the configured `525` failover path end to end.
+7. A controlled invalid-certificate test was then performed on an isolated proxied test hostname under Cloudflare **Full (strict)**. Caddy was stopped and a temporary TLS listener with a self-signed certificate was bound to origin port `443`. A direct origin connection established TLS successfully, while Cloudflare rejected the invalid origin certificate. The Worker returned the static outage page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`, verifying the configured `526` path end to end.
+8. After the temporary TLS listener was removed and Caddy was restarted, the next proxied request returned normal WordPress as HTTP `200` with no `X-Sprey-Failover` header.
 
-The controlled TLS test verifies the `525` failover path end to end on production. `526` remains part of the configured status set but has not yet been explicitly verified end to end.
+The configured `525` and `526` TLS-specific failure paths are therefore both explicitly verified.
 
 ## Rollback
 
-Remove or disable only the `sprey.win/*` Workers Route. With the existing proxied DNS record unchanged, requests return directly to the WordPress origin through Cloudflare. Removing the route does not remove the Worker or the static fallback and does not require a DNS change.
+Remove or disable only the relevant Workers Route. With the existing proxied DNS record unchanged, requests return directly to the WordPress origin through Cloudflare. Removing the route does not remove the Worker or the static fallback and does not require a DNS change.
 
 ## Operational notes
 
