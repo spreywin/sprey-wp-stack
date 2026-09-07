@@ -1,5 +1,5 @@
 const PRIMARY_TIMEOUT_MS = 5000;
-const FAILOVER_STATUSES = new Set([502, 503, 504, 521]);
+const FAILOVER_STATUSES = new Set([502, 503, 504, 520, 521, 522, 523, 524, 525, 526]);
 const FALLBACK_URL = "https://sprey-outage.pages.dev/";
 
 async function fetchPrimary(request) {
