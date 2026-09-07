@@ -175,7 +175,7 @@ Configured status coverage is currently:
 502 503 504 520 521 522 523 524 525 526
 ```
 
-Production failover is verified for the existing full-origin outage path: Caddy stop/start, normal VPS reboot, and hard reboot. `521` was verified end to end. A real `525` was observed during a clean reinstall while the origin temporarily had the wrong hostname/TLS state; `525` and `526` are now included in the Worker configuration but controlled conversion of those TLS statuses to the static fallback is **still pending verification**.
+Production failover is verified for the full-origin outage path, including Caddy stop/start, normal VPS reboot, hard reboot, and a controlled TLS-handshake failure that produced the `525` path. In the controlled `525` test, the Worker returned the static outage page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`; after Caddy was restored, the next request returned normal WordPress as HTTP `200` without the failover header. `526` remains configured but is not yet explicitly verified end to end.
 
 See [`cloudflare/README.md`](cloudflare/README.md) for rollout, validation, rollback, and the exact verification boundary.
 
@@ -231,4 +231,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-Current items still requiring explicit verification include manual setup, phpMyAdmin, controlled `525/526` failover, and rebuild behavior after in-admin plugin updates.
+Current items still requiring explicit verification include manual setup, phpMyAdmin, controlled `526` failover, and rebuild behavior after in-admin plugin updates.
