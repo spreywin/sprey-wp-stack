@@ -7,7 +7,7 @@ visitor -> Cloudflare Worker -> primary WordPress VPS
                             \-> sprey-outage.pages.dev on failure
 ```
 
-The Worker attempts the primary origin for every request. It serves the static fallback after a network error, a five-second timeout, or an upstream `502`, `503`, `504`, or `521`. The next visitor request tries the primary again, which provides automatic recovery without a DNS change.
+The Worker attempts the primary origin for every request. It serves the static fallback after a network error, a five-second timeout, or a selected upstream origin failure. The configured status set is `502`, `503`, `504`, `520`, `521`, `522`, `523`, `524`, `525`, and `526`. The next visitor request tries the primary again, which provides automatic recovery without a DNS change.
 
 This is not an independent health monitor. It does not probe the VPS periodically, keep shared health state, or fail over before a visitor arrives. It also does not make the outage page a WooCommerce replacement: cart, checkout, accounts, orders, sessions, and payments remain unavailable while WordPress is down.
 
@@ -40,7 +40,7 @@ Use a temporary hostname such as `failover-test.sprey.win` before touching produ
 3. In the Worker's **Settings > Domains & Routes**, add the route `failover-test.sprey.win/*` in the `sprey.win` zone.
 4. Browse representative public pages through the test hostname. Verify redirects, assets, cookies, login, cart, and checkout behavior without placing a real order.
 5. Confirm a healthy response does not contain `X-Sprey-Failover`.
-6. In a controlled maintenance window, make only the test hostname's origin path return `503`, or briefly block that test path at the origin. Verify the response is the static outage page, has status `503`, and includes `X-Sprey-Failover: static-outage-page`.
+6. In a controlled maintenance window, make only the test hostname's origin path return a handled failure. Verify the response is the static outage page, has status `503`, and includes `X-Sprey-Failover: static-outage-page`.
 7. Restore the test origin and verify the next request immediately returns WordPress again.
 
 Do not change the production DNS record during this test.
@@ -52,7 +52,7 @@ Do not change the production DNS record during this test.
 3. Leave the existing proxied DNS record pointing to the WordPress VPS. The route runs before that origin and `fetch(request)` continues to it.
 4. Use **Fail open (proceed)** for the route failure mode so a Worker execution failure does not block a healthy origin.
 5. Test the home page, a product page, cart, checkout, account, WordPress administration, and static assets.
-6. Check the Worker's logs and analytics for exceptions, timeouts, unexpected `502/503/504/521` responses, and Free-plan usage.
+6. Check the Worker's logs and analytics for exceptions, timeouts, unexpected origin errors, and Free-plan usage.
 
 ## Validation
 
@@ -79,12 +79,12 @@ The production `sprey.win/*` Workers Route has been verified with several contro
 The verified sequence was:
 
 1. Healthy origin returned HTTP `200` through Caddy with no `X-Sprey-Failover` header.
-2. Stopping Caddy caused Cloudflare to return `521`, confirming that origin-unavailable failures must be included in the failover status set.
+2. Stopping Caddy caused Cloudflare to return `521`.
 3. With `521` handled by the Worker, `sprey.win` returned the static `sprey-outage.pages.dev` page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`.
 4. Starting Caddy restored the next request to the normal WordPress origin with HTTP `200` and no `X-Sprey-Failover` header.
 5. The same failover-and-recovery behavior was verified during a normal VPS reboot and during a VPS hard reboot.
 
-These tests verify both service-level and full-origin failover, plus automatic recovery without a DNS change.
+A real Cloudflare `525` was also observed during a clean VPS reinstall while the origin was temporarily serving the wrong hostname and therefore could not complete the expected TLS handshake. The Worker is now configured to include `525` and `526` in the failover set, but controlled fallback conversion for these TLS-specific statuses is **not yet marked verified**. Test `525` and `526` deliberately before claiming them as production-verified behavior.
 
 ## Rollback
 
@@ -93,9 +93,9 @@ Remove or disable only the `sprey.win/*` Workers Route. With the existing proxie
 ## Operational notes
 
 - Treat a rise in fallback responses as an incident signal, not as proof that the whole VPS is down.
-- Inspect the WordPress, Caddy, database, network, and Worker logs before changing failure criteria.
+- Inspect the WordPress, Caddy, database, network, TLS, and Worker logs before changing failure criteria.
 - Keep the static outage page independent from WordPress and free of store-like controls.
-- Test failover after material Worker, Cloudflare, Caddy, DNS, VPS, or fallback-page changes.
+- Test failover after material Worker, Cloudflare, Caddy, DNS, VPS, TLS, or fallback-page changes.
 - Review Cloudflare's current Workers limits and pricing before traffic approaches the Free-plan allowance.
 
 Cloudflare references: <a href="https://developers.cloudflare.com/workers/configuration/routing/routes/" target="_blank" rel="noopener noreferrer">Workers Routes</a>, <a href="https://developers.cloudflare.com/workers/platform/limits/" target="_blank" rel="noopener noreferrer">Workers limits</a>, and <a href="https://developers.cloudflare.com/cache/how-to/cache-rules/" target="_blank" rel="noopener noreferrer">Cache Rules</a>.
