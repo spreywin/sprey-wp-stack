@@ -131,7 +131,7 @@ The verified ARM64 manual test confirmed:
 - WooCommerce `11.1.0` and BTCPay For WooCommerce V2 `2.8.2` were present and activated successfully;
 - expected WooCommerce tables were created;
 - phpMyAdmin `latest` pulled as `linux/arm64`, started localhost-only on `127.0.0.1:8081`, and returned local HTTP `200`;
-- after a normal host reboot, Caddy, WordPress, and MariaDB returned automatically, MariaDB was healthy, the public site returned HTTP `200`, and WordPress/database state persisted.
+- after a normal host reboot, Caddy, WordPress, MariaDB, and an active phpMyAdmin returned automatically; MariaDB was healthy, the public site returned HTTP `200`, phpMyAdmin remained localhost-only and returned local HTTP `200`, and WordPress/database state persisted.
 
 Canonical verification record: [WP Stack verification — 2026-09-07](https://docs.sprey.win/operations/wp-stack-verification-2026-09-07/).
 
@@ -206,7 +206,7 @@ Configured status coverage is currently:
 502 503 504 520 521 522 523 524 525 526
 ```
 
-Production failover is verified for the full-origin outage path, including Caddy stop/start, normal VPS reboot, hard reboot, and a controlled TLS-handshake failure that produced the `525` path. In the controlled `525` test, the Worker returned the static outage page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`; after Caddy was restored, the next request returned normal WordPress as HTTP `200` without the failover header. `526` remains configured but is not yet explicitly verified end to end.
+Failover and recovery are verified for the full-origin outage path, Caddy stop/start, normal VPS reboot, hard reboot, controlled `525`, and controlled `526` behavior. The `525` path was verified by creating a TLS-handshake failure. The `526` path was verified on an isolated proxied test hostname under Cloudflare **Full (strict)** by temporarily serving a self-signed origin certificate: the direct origin TLS connection succeeded, Cloudflare rejected the invalid certificate, and the Worker returned the static outage page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`. Restoring Caddy returned the next proxied request to normal WordPress as HTTP `200` without the failover header.
 
 See [`cloudflare/README.md`](cloudflare/README.md) for rollout, validation, rollback, and the exact verification boundary.
 
@@ -219,11 +219,10 @@ Verified behavior includes:
 - localhost-only publishing;
 - SSH-tunnel access and MariaDB login path;
 - stop/start lifecycle;
-- ARM64 image/start behavior (`linux/arm64`) with local HTTP `200`.
+- ARM64 image/start behavior (`linux/arm64`) with local HTTP `200`;
+- active-service recovery after a normal host reboot while remaining bound only to `127.0.0.1:8081`.
 
-In the verified ARM64 reboot test, phpMyAdmin was intentionally stopped/removed before reboot because it is an optional maintenance service. phpMyAdmin-active reboot behavior therefore remains explicitly unverified.
-
-Use the canonical operations guide for start commands, SSH tunneling, password retrieval, login choices, and security notes:
+Use the canonical operations guide for start commands, SSH tunneling, password retrieval, login choices, stop/start steps, and security notes:
 
 [WP Stack phpMyAdmin access](https://docs.sprey.win/operations/wp-stack-phpmyadmin/)
 
@@ -267,4 +266,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-Current items still requiring explicit verification include phpMyAdmin-active reboot behavior, controlled `526` failover, and a real BTCPay payment integration flow. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
+The v1 infrastructure/deployment verification gaps targeted before release are closed. A real BTCPay payment flow remains separate payment-product integration work. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
