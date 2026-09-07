@@ -74,13 +74,16 @@ Verified results from the current clean test:
 
 - the host started with no swap;
 - the installer created 1 GiB swap and activated it successfully;
+- the swap file persisted across a normal VPS reboot and returned active from `/etc/fstab`;
 - Caddy, WordPress, and MariaDB started normally;
 - MariaDB reported healthy;
+- all three stack services returned automatically after the reboot;
 - WordPress had working outbound DNS/HTTPS through `edge` while MariaDB remained isolated on `app`;
 - WordPress Site Health reported **Good** after setup, with only the intentionally disabled search-engine indexing recommendation while the store remained private;
-- current WooCommerce and BTCPay for WooCommerce V2 packages were bundled into the fresh build.
+- current WooCommerce and BTCPay for WooCommerce V2 packages were bundled into the fresh build;
+- the installer's automatic post-build cleanup completed in the fresh run and left Docker builder cache at `0 B`.
 
-The automatic post-build cleanup is implemented and the same cleanup commands were manually validated on the clean test host: Docker builder cache fell from about 1.228 GB to 0 B without removing active images, containers, networks, or volumes. The full installer path including that cleanup should be re-run once more on a fresh host before marking the cleanup step itself clean-install verified.
+On the verified 10 GB test VPS, the completed fresh install used about 71% of the root filesystem and left about 2.8 GB free. This confirms that the stack fits for testing but has limited storage headroom for production growth.
 
 ## Manual start — pending verification
 
@@ -228,4 +231,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-Current items still requiring explicit verification include manual setup, phpMyAdmin, controlled `525/526` failover, rebuild behavior after in-admin plugin updates, and the final clean-install pass with automatic post-build cleanup.
+Current items still requiring explicit verification include manual setup, phpMyAdmin, controlled `525/526` failover, and rebuild behavior after in-admin plugin updates.
