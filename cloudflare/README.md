@@ -76,15 +76,17 @@ Also verify that Cloudflare cache rules bypass `/cart*`, `/checkout*`, `/my-acco
 
 The production `sprey.win/*` Workers Route has been verified with several controlled origin interruptions.
 
-The verified sequence was:
+The verified sequence includes:
 
 1. Healthy origin returned HTTP `200` through Caddy with no `X-Sprey-Failover` header.
 2. Stopping Caddy caused Cloudflare to return `521`.
 3. With `521` handled by the Worker, `sprey.win` returned the static `sprey-outage.pages.dev` page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page`.
 4. Starting Caddy restored the next request to the normal WordPress origin with HTTP `200` and no `X-Sprey-Failover` header.
 5. The same failover-and-recovery behavior was verified during a normal VPS reboot and during a VPS hard reboot.
+6. A controlled TLS-handshake failure was created by stopping Caddy and temporarily binding a non-TLS listener to origin port `443`. Through the production Worker route, `sprey.win` returned the static outage page as HTTP `503` with `Cache-Control: no-store`, `Retry-After: 60`, and `X-Sprey-Failover: static-outage-page` rather than Cloudflare's default TLS error page.
+7. After the temporary listener was removed and Caddy was restarted, the next request returned normal WordPress as HTTP `200` with no `X-Sprey-Failover` header.
 
-A real Cloudflare `525` was also observed during a clean VPS reinstall while the origin was temporarily serving the wrong hostname and therefore could not complete the expected TLS handshake. The Worker is now configured to include `525` and `526` in the failover set, but controlled fallback conversion for these TLS-specific statuses is **not yet marked verified**. Test `525` and `526` deliberately before claiming them as production-verified behavior.
+The controlled TLS test verifies the `525` failover path end to end on production. `526` remains part of the configured status set but has not yet been explicitly verified end to end.
 
 ## Rollback
 
