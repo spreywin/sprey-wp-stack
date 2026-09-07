@@ -99,6 +99,14 @@ docker compose pull --ignore-buildable
 docker compose build wordpress
 docker compose up -d
 
+note "Removing temporary installation cache"
+# The installer targets a clean VPS. Once the runtime image is built and the
+# stack is running, BuildKit cache is no longer required for operation.
+# Do not prune images, containers, networks, or volumes here.
+docker builder prune --all --force >/dev/null || note "Docker build cache cleanup was skipped"
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+
 printf '\nReady. Caddy will obtain HTTPS automatically after DNS for %s reaches this server.\n' "$DOMAIN"
 printf 'WooCommerce and BTCPay for WooCommerce V2 are bundled and ready to activate after WordPress setup.\n'
 printf 'Check stack resources with: cd %s && ./status.sh\n' "$PROJECT_DIR"
