@@ -4,31 +4,33 @@
 > **Sprey Docs:** [docs.sprey.win](https://docs.sprey.win/)  
 > **Stack documentation:** [Sprey WP Stack docs](https://docs.sprey.win/stacks/wp-stack/)
 
-Small, production-oriented WordPress/WooCommerce stack for a modest VPS. It keeps the public surface minimal: Caddy is the only service that publishes ports; WordPress, MariaDB, and optional phpMyAdmin stay on private Docker networks.
+Small, production-oriented WordPress/WooCommerce stack for a modest VPS. Caddy is the only public service. WordPress reaches the Internet through the `edge` network and reaches MariaDB through the private `app` network; MariaDB remains on `app` only. Optional phpMyAdmin is off by default and bound to localhost when started.
 
-Sprey WP Stack is an **online storefront integration path** for Sprey's broader **non-custodial crypto acquiring** model. Sprey Processing is intended for businesses accepting crypto payments both online and in person; WooCommerce is one merchant-facing integration, not the boundary of the payment product.
+Sprey WP Stack is an online-store integration path for Sprey's broader non-custodial crypto acquiring model. Sprey Processing is the payment product; WP Stack is one prepared merchant storefront path into it.
 
 ## Included
 
 - Caddy: automatic HTTPS, HTTP/3, compression, reverse proxy
-- WordPress + Apache: the public site
-- WooCommerce: bundled in the Sprey WordPress image
-- BTCPay for WooCommerce V2: bundled in the Sprey WordPress image
-- MariaDB: persistent WordPress database
-- phpMyAdmin: optional and not started by default; it listens only on localhost
+- WordPress + Apache + PHP 8.4
+- current stable WooCommerce bundled at image build time
+- current stable BTCPay for WooCommerce V2 bundled at image build time
+- MariaDB LTS
+- optional phpMyAdmin, off by default and localhost-only
 - Cloudflare Worker request-time failover to a static outage page
-- `status.sh`: host profile, disk, inode, RAM, swap, load, container resource, and Docker storage overview
+- `status.sh`: host profile, filesystem/inodes, RAM/swap, container resources, Docker usage, containerd/Docker storage directories, and a low-disk warning
 - bounded Docker logs: local logging driver, 10 MB per file, up to 3 files per container
 
 ## Requirements
 
-- For automatic installation: a fresh supported Ubuntu or Debian VPS; Docker Engine and Docker Compose v2 do not need to be preinstalled because the installer installs them when absent
-- A domain with `A` (and, if used, `AAAA`) records pointing to the VPS
-- Firewall allowing TCP `80`, TCP `443`, and UDP `443`; SSH should be restricted to your own IP or VPN
+- fresh supported Ubuntu or Debian VPS for automatic installation
+- domain pointed to the VPS before Caddy is expected to obtain HTTPS
+- TCP `80`, TCP `443`, UDP `443`, and the active SSH port available through the firewall
+
+A 10 GB root disk is sufficient for testing but leaves limited production headroom after a current Ubuntu system, Docker/containerd, WordPress, MariaDB, and images are installed. Use a larger disk for production when possible.
 
 ## Before installation
 
-On a fresh VPS, update installed packages first:
+Update the operating system first:
 
 ```bash
 sudo apt update
@@ -36,11 +38,9 @@ sudo apt upgrade -y
 test -f /var/run/reboot-required && sudo reboot
 ```
 
-If the VPS reboots, reconnect before continuing.
+Reconnect after a reboot before continuing.
 
-## One-command install (Ubuntu/Debian)
-
-On a new VPS, point DNS first and then run:
+## One-command install
 
 ```bash
 git clone https://github.com/spreywin/sprey-wp-stack.git
@@ -48,9 +48,43 @@ cd sprey-wp-stack
 sudo ./install.sh example.com admin@example.com
 ```
 
-The installer installs Docker when needed, creates strong database passwords in `.env`, configures UFW without closing the active SSH port, opens only SSH, HTTP, HTTPS and HTTP/3, builds the WordPress image with the tested WooCommerce and BTCPay plugin versions, enables the resource status helper, and starts the stack. It uses the port of the active SSH connection when available; when `sudo` does not preserve `SSH_CONNECTION`, it falls back to `sshd`'s effective configuration. It refuses to replace an existing `.env` or run on an unsupported system.
+Replace both example values with the real deployment domain and email.
 
-## Manual start
+The installer currently:
+
+- installs prerequisites and Docker Engine / Docker Compose v2 when needed;
+- detects active swap and leaves existing swap unchanged;
+- creates and enables a persistent 1 GiB swap file when no active swap exists;
+- configures UFW while preserving the active SSH port;
+- opens only SSH, HTTP, HTTPS, and HTTP/3;
+- creates `.env` with strong generated database passwords;
+- builds the WordPress image with the current stable WooCommerce and BTCPay for WooCommerce V2 packages;
+- starts the stack;
+- removes unused Docker builder cache after a successful build/start;
+- cleans the APT package cache and lists after installation;
+- enables the bundled `status.sh` resource helper.
+
+The installer refuses to overwrite an existing `.env` deployment.
+
+## Verified clean-host deployment
+
+A clean installation has been verified on Ubuntu 26.04.1 LTS on a 1 vCPU / ~1 GB RAM VPS.
+
+Verified results from the current clean test:
+
+- the host started with no swap;
+- the installer created 1 GiB swap and activated it successfully;
+- Caddy, WordPress, and MariaDB started normally;
+- MariaDB reported healthy;
+- WordPress had working outbound DNS/HTTPS through `edge` while MariaDB remained isolated on `app`;
+- WordPress Site Health reported **Good** after setup, with only the intentionally disabled search-engine indexing recommendation while the store remained private;
+- current WooCommerce and BTCPay for WooCommerce V2 packages were bundled into the fresh build.
+
+The automatic post-build cleanup is implemented and the same cleanup commands were manually validated on the clean test host: Docker builder cache fell from about 1.228 GB to 0 B without removing active images, containers, networks, or volumes. The full installer path including that cleanup should be re-run once more on a fresh host before marking the cleanup step itself clean-install verified.
+
+## Manual start — pending verification
+
+The manual path remains documented for reference, but it is **not yet re-verified against the current installer/network/swap/storage behavior**. Do not mark it production-verified until the complete manual path has been tested on a clean VPS.
 
 ```bash
 git clone https://github.com/spreywin/sprey-wp-stack.git
@@ -65,23 +99,36 @@ docker compose up -d
 docker compose ps
 ```
 
-Open `https://YOUR_DOMAIN` and complete the WordPress installer. Caddy obtains and renews certificates automatically once DNS and firewall settings are correct. WooCommerce and BTCPay for WooCommerce V2 are then available to activate without a separate download.
+Open `https://YOUR_DOMAIN` and complete the standard WordPress setup.
 
 ## Resource and disk status
 
-Run the bundled status command whenever you need a quick VPS health snapshot:
+Run:
 
 ```bash
 ./status.sh
 ```
 
-It reports a host profile with hostname, OS, kernel, architecture, virtualization, vCPU count, CPU model, total RAM, total swap, root device, and root filesystem size. Runtime sections report system uptime/load, root filesystem usage, inode usage, RAM/swap use, Compose service state, a one-shot container CPU/memory/network/block-I/O snapshot, and Docker disk usage.
+It reports:
 
-For a deeper storage breakdown:
+- hostname, OS, kernel, architecture, virtualization, vCPU, CPU model, RAM, swap, root device, and root size;
+- uptime and load;
+- root filesystem and inode usage;
+- RAM and swap use;
+- `/var/lib/containerd` and `/var/lib/docker` sizes when present;
+- Compose service state;
+- one-shot container CPU/memory/network/block-I/O;
+- Docker disk usage.
+
+If the root filesystem reaches 80% used, `status.sh` prints a warning to investigate storage before upgrades or rebuilds.
+
+For deeper Docker usage:
 
 ```bash
 docker system df -v
 ```
+
+On the current clean test host, most non-system application storage was under containerd image/content data plus persistent Docker volumes. Do not manually delete `/var/lib/containerd` or `/var/lib/docker` contents.
 
 ## Log rotation
 
@@ -92,13 +139,9 @@ max-size: 10m
 max-file: 3
 ```
 
-This prevents application and proxy logs from growing without a bound and silently consuming the VPS disk. The limit applies to Caddy, WordPress, MariaDB, and the optional phpMyAdmin container.
-
 ## BTCPay Server and WooCommerce
 
-Sprey WP Stack does not run BTCPay Server inside the WordPress stack. Payment infrastructure remains separate. The official **BTCPay for WooCommerce V2** plugin and WooCommerce itself are bundled into the Sprey WordPress image.
-
-The payment model is deliberately non-custodial:
+Sprey WP Stack does not run BTCPay Server inside the WordPress VPS. Payment infrastructure remains separate.
 
 ```text
 WooCommerce order -> BTCPay invoice -> merchant-controlled wallet / payment destination
@@ -106,56 +149,50 @@ WooCommerce order -> BTCPay invoice -> merchant-controlled wallet / payment dest
                          +-> verified invoice/payment state -> WooCommerce order status
 ```
 
-WooCommerce owns products, prices, stock, carts, checkout, and orders. BTCPay creates and observes invoice/payment state. The merchant owns the wallet or payment destination. Sprey does not receive, hold, or forward merchant funds.
+WooCommerce owns products, cart, checkout, and orders. BTCPay creates and observes invoice/payment state. The merchant owns the wallet or payment destination. Sprey does not receive, hold, or forward merchant funds.
 
 Recommended deployment flow:
 
-1. Deploy Sprey WP Stack and complete WordPress setup.
-2. Activate WooCommerce and complete its initial store setup.
+1. Deploy WP Stack and complete WordPress setup.
+2. Activate/configure WooCommerce.
 3. Activate BTCPay for WooCommerce V2.
-4. Connect the plugin to a BTCPay Server store. For Sprey deployments, `https://pay.sprey.win` is the recommended hosted endpoint.
-5. Configure the BTCPay store with the merchant-controlled wallet or supported external payment destination.
-6. Run a test payment and verify both the WooCommerce order state and receipt at the merchant-controlled destination before accepting production orders.
+4. Connect it to the merchant's BTCPay store; for Sprey-hosted deployments use `https://pay.sprey.win`.
+5. Configure the merchant-controlled payment destination.
+6. Run a real test payment and verify both WooCommerce order state and receipt at the merchant-controlled destination.
 
-Canonical connection and testing instructions: [BTCPay for WooCommerce](https://docs.sprey.win/integrations/btcpay-woocommerce/).
-
-For evaluation only, BTCPay Server provides official mainnet and testnet demo instances. See the integration guide above for the current endpoints and limitations.
-
-Do not store BTCPay Server secrets, API keys, wallet seeds, private spending keys, or payment credentials in this repository. For Sprey-hosted BTCPay, custody must remain with the merchant.
+Canonical integration guide: [BTCPay for WooCommerce](https://docs.sprey.win/integrations/btcpay-woocommerce/).
 
 ## Cloudflare and outage fallback
 
-Cloudflare support is part of the v1.0 deployment scope.
+The v1 availability design places a Cloudflare Worker in front of `sprey.win`. The Worker tries the WordPress origin on every request and falls back to `sprey-outage.pages.dev` for network errors, the bounded timeout, or selected origin failures.
 
-For initial deployment, make sure Caddy can obtain a valid origin certificate. After HTTPS is working, enable the Cloudflare proxy and use **Full (strict)** SSL/TLS mode. Do not cache WooCommerce cart, checkout, account, or WordPress admin routes.
+Configured status coverage is currently:
 
-The v1.0 availability design places a **Cloudflare Worker** in front of `sprey.win`. The Worker forwards each request to the primary WordPress VPS. On a network failure, a bounded timeout, or a selected upstream status (`502`, `503`, `504`, or `521`), it serves the static `sprey-outage.pages.dev` page instead. Every new request tries the primary again, so normal service returns automatically as soon as the VPS responds successfully.
+```text
+502 503 504 520 521 522 523 524 525 526
+```
 
-The production failover path has been verified with a Caddy stop/start cycle, a normal VPS reboot, and a VPS hard reboot. In each full-origin interruption, the outage page appeared while the origin was unavailable and the next successful request returned to WordPress automatically without a DNS change.
+Production failover is verified for the existing full-origin outage path: Caddy stop/start, normal VPS reboot, and hard reboot. `521` was verified end to end. A real `525` was observed during a clean reinstall while the origin temporarily had the wrong hostname/TLS state; `525` and `526` are now included in the Worker configuration but controlled conversion of those TLS statuses to the static fallback is **still pending verification**.
 
-This is request-time failover on the Workers Free plan, not Cloudflare Load Balancing and not an independent periodic health monitor. An outage is detected only when a visitor request reaches the Worker. Review the current Workers Free limits before production use.
+See [`cloudflare/README.md`](cloudflare/README.md) for rollout, validation, rollback, and the exact verification boundary.
 
-The Pages site is an outage notice only. It must never be presented as a functioning WooCommerce store: cart, checkout, account, order processing and payment flows require the live WordPress origin.
+## Optional phpMyAdmin — pending verification
 
-See [`cloudflare/README.md`](cloudflare/README.md) for the Worker source, rollout, production activation, validation, rollback, and operational checks.
-
-## Optional phpMyAdmin
-
-It is intentionally off by default. Prefer SSH and `docker compose exec mariadb mariadb -u root -p` for routine database work.
-
-If you need phpMyAdmin temporarily, start it and tunnel the local-only port:
+phpMyAdmin is intentionally off by default and bound only to `127.0.0.1:8081` when started.
 
 ```bash
 docker compose --profile admin up -d phpmyadmin
-# Run this on your own computer, then open http://localhost:8081.
+# On your own computer:
 ssh -L 8081:127.0.0.1:8081 root@YOUR_SERVER
 ```
 
-Remove it again when finished:
+Then open `http://localhost:8081` locally. Stop it when finished:
 
 ```bash
 docker compose --profile admin stop phpmyadmin
 ```
+
+This current phpMyAdmin flow still needs a fresh verification pass before being marked verified.
 
 ## Operations
 
@@ -166,40 +203,29 @@ docker compose ps
 ./status.sh
 docker compose logs -f caddy
 
-# Update external images and rebuild the storefront. Review release notes first.
+# Update external images and rebuild the storefront.
 docker compose pull --ignore-buildable
 docker compose build wordpress
 docker compose up -d
 
-# Database dump (create the backups directory first)
-mkdir -p backups
-docker compose exec -T mariadb mariadb-dump -u root -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" \
-  > "backups/wordpress-$(date +%F).sql"
+# Optional safe cleanup after a rebuild.
+docker builder prune --all --force
+apt-get clean
+rm -rf /var/lib/apt/lists/*
 ```
 
-Do not run `docker compose down -v` on a live stack: it removes the named volumes containing the site, database, and Caddy certificates.
+Do not run `docker compose down -v` on a live stack: it removes named volumes containing the site, database, and Caddy state.
 
-## Documentation model
+## Update behavior
 
-The repository keeps two public surfaces intentionally:
+A new WordPress image build downloads the current stable WooCommerce and BTCPay for WooCommerce V2 releases. Existing site data lives in the persistent `wordpress_data` volume. Before production use, the update/rebuild path must also be tested explicitly to confirm that plugins updated later inside WordPress are not rolled back by a container rebuild/recreate.
 
-- the **Sprey WP Stack product landing** stays in this repository under `docs/` and is published at `https://wp-stack.sprey.win/`;
-- canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs), covering platform architecture, products, stacks, integrations, and operations.
+## Documentation and verification rule
 
-The product landing supports responsive layouts, Light/Dark/Auto themes, and optional machine-translated views while English remains the canonical source.
+Canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs).
 
-## Repository conventions
+The operating rule is simple:
 
-- All canonical public documentation, source comments, UI strings, examples, commit messages and release notes are written in English.
-- Copy `.env.example` to `.env`; `.env` never enters Git.
-- Default tags deliberately follow current stable WordPress/PHP and Caddy, plus the MariaDB LTS line.
-- WooCommerce and BTCPay plugin versions are explicit build arguments in `.env` so upgrades are intentional and testable.
-- Override an image tag or bundled plugin version only after testing a compatibility exception or upgrade.
-- Use a fork or a template repository for each deployment; configuration and runtime data remain outside version control.
-- Back up both the MariaDB database and WordPress uploads before upgrades.
+> **Build it. Verify it. Document it.**
 
-## v1.0 scope
-
-Sprey WP Stack v1.0 covers the WordPress/WooCommerce site stack, bundled WooCommerce and BTCPay for WooCommerce V2, bounded container logging, built-in VPS host/resource visibility, the product landing, and request-time Cloudflare Worker failover to the static outage page. Shared architecture and product documentation live in the independent Sprey Docs portal.
-
-Monitoring platforms, VPN/control-plane services, and the BTCPay Server infrastructure itself remain separate projects/services.
+Current items still requiring explicit verification include manual setup, phpMyAdmin, controlled `525/526` failover, rebuild behavior after in-admin plugin updates, and the final clean-install pass with automatic post-build cleanup.
