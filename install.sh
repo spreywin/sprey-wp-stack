@@ -24,7 +24,26 @@ command -v openssl >/dev/null || fail "openssl is required but unavailable."
 note "Installing prerequisites"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
-apt-get install -y ca-certificates curl gnupg openssl ufw
+apt-get install -y ca-certificates curl gnupg openssl ufw util-linux
+
+if ! swapon --noheadings --show=NAME 2>/dev/null | grep -q .; then
+  note "No active swap detected; creating a 1 GiB swap file"
+  SWAP_FILE="/swapfile"
+  if [[ -e "$SWAP_FILE" ]]; then
+    SWAP_FILE="/swapfile-sprey"
+  fi
+  if command -v fallocate >/dev/null; then
+    fallocate -l 1G "$SWAP_FILE"
+  else
+    dd if=/dev/zero of="$SWAP_FILE" bs=1M count=1024 status=progress
+  fi
+  chmod 600 "$SWAP_FILE"
+  mkswap "$SWAP_FILE" >/dev/null
+  swapon "$SWAP_FILE"
+  printf '%s none swap sw 0 0\n' "$SWAP_FILE" >> /etc/fstab
+else
+  note "Existing swap detected; leaving it unchanged"
+fi
 
 if ! command -v docker >/dev/null; then
   note "Installing Docker Engine and Docker Compose"
