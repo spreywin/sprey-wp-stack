@@ -1,10 +1,11 @@
 # Sprey WP Stack
 
+> **Stable release:** [v1.0.0](https://github.com/spreywin/sprey-wp-stack/releases/tag/v1.0.0) — released 2026-09-09  
 > **Product landing:** [Sprey WP Stack](https://wp-stack.sprey.win/)  
 > **Sprey Docs:** [docs.sprey.win](https://docs.sprey.win/)  
 > **Stack documentation:** [Sprey WP Stack docs](https://docs.sprey.win/stacks/wp-stack/)
 
-Small, production-oriented WordPress/WooCommerce stack for a modest VPS. Caddy is the only public service. WordPress reaches the Internet through the `edge` network and reaches MariaDB through the private `app` network; MariaDB remains on `app` only. Optional phpMyAdmin is off by default and bound to localhost when started.
+Production-ready **WordPress + WooCommerce Docker stack** for small VPS deployments, with **Caddy**, **MariaDB**, optional **phpMyAdmin**, and **BTCPay Server integration**. Caddy is the only public service. WordPress reaches the Internet through the `edge` network and reaches MariaDB through the private `app` network; MariaDB remains on `app` only. Optional phpMyAdmin is off by default and bound to localhost when started.
 
 Sprey WP Stack is an online-store integration path for Sprey's broader non-custodial crypto acquiring model. Sprey Processing is the payment product; WP Stack is one prepared merchant storefront path into it.
 
@@ -266,4 +267,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-The v1 infrastructure/deployment verification gaps targeted before release are closed. A real BTCPay payment flow remains separate payment-product integration work. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
+**Sprey WP Stack v1.0.0 is the current stable release.** It was published after the targeted infrastructure and deployment checks were completed. A real BTCPay payment flow remains separate payment-product integration work. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
