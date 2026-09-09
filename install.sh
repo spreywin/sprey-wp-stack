@@ -4,6 +4,24 @@ set -Eeuo pipefail
 
 PROJECT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
+# Resolve the real user who initiated the installation.
+# - sudo ./install.sh ...        -> SUDO_USER
+# - sudo sh -c 'nohup ...'       -> SUDO_USER inherited by the child
+# - direct root execution        -> project directory owner when appropriate
+INSTALL_USER="${SUDO_USER:-}"
+
+if [[ -z "$INSTALL_USER" || "$INSTALL_USER" == "root" ]] || ! id "$INSTALL_USER" >/dev/null 2>&1; then
+  PROJECT_OWNER="$(stat -c '%U' "$PROJECT_DIR" 2>/dev/null || true)"
+  if [[ -n "$PROJECT_OWNER" && "$PROJECT_OWNER" != "UNKNOWN" && "$PROJECT_OWNER" != "root" ]] \
+    && id "$PROJECT_OWNER" >/dev/null 2>&1; then
+    INSTALL_USER="$PROJECT_OWNER"
+  else
+    INSTALL_USER="root"
+  fi
+fi
+
+INSTALL_GROUP="$(id -gn "$INSTALL_USER")"
+
 fail() { printf '\nError: %s\n' "$*" >&2; exit 1; }
 note() { printf '\n==> %s\n' "$*"; }
 
@@ -67,6 +85,13 @@ fi
 
 docker compose version >/dev/null || fail "Docker Compose v2 is required."
 
+# Allow the real installing user to manage Docker without sudo.
+# Group membership becomes active after a new login session.
+if [[ "$INSTALL_USER" != "root" ]]; then
+  getent group docker >/dev/null || fail "Docker group was not created."
+  usermod -aG docker "$INSTALL_USER"
+fi
+
 note "Configuring firewall"
 # The live connection is the safest source: it preserves a non-standard port.
 # If sudo removes SSH_CONNECTION or the script runs from a provider console,
@@ -97,6 +122,11 @@ set_env DOMAIN "$DOMAIN"
 set_env ACME_EMAIL "$EMAIL"
 set_env MYSQL_PASSWORD "$(openssl rand -hex 32)"
 set_env MYSQL_ROOT_PASSWORD "$(openssl rand -hex 32)"
+
+# Keep deployment secrets private, but accessible to the real installing user.
+if [[ "$INSTALL_USER" != "root" ]]; then
+  chown "$INSTALL_USER:$INSTALL_GROUP" "$PROJECT_DIR/.env"
+fi
 chmod 600 "$PROJECT_DIR/.env"
 chmod +x "$PROJECT_DIR/status.sh"
 
@@ -117,4 +147,9 @@ rm -rf /var/lib/apt/lists/*
 
 printf '\nReady. Caddy will obtain HTTPS automatically after DNS for %s reaches this server.\n' "$DOMAIN"
 printf 'WooCommerce and BTCPay for WooCommerce V2 are bundled and ready to activate after WordPress setup.\n'
+
+if [[ "$INSTALL_USER" != "root" ]]; then
+  printf 'User %s was added to the docker group. Log out and back in once before using Docker without sudo.\n' "$INSTALL_USER"
+fi
+
 printf 'Check stack resources with: cd %s && ./status.sh\n' "$PROJECT_DIR"
