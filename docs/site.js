@@ -1,6 +1,12 @@
 (() => {
   const root = document.documentElement;
   const themes = ['auto', 'light', 'dark'];
+  const themeLabels = { auto: 'Theme: Auto', light: 'Theme: Light', dark: 'Theme: Dark' };
+  const themeIcons = {
+    auto: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="11" rx="2"/><path d="M9 20h6M12 16v4"/></svg>',
+    light: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.41M17.66 6.34l1.41-1.41"/></svg>',
+    dark: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.4A8.5 8.5 0 0 1 9.6 3.5 8.5 8.5 0 1 0 20.5 14.4Z"/></svg>'
+  };
 
   if (!document.querySelector('link[rel="icon"]')) {
     const favicon = document.createElement('link');
@@ -24,7 +30,7 @@
     if (!themeButton) {
       themeButton = document.createElement('button');
       themeButton.type = 'button';
-      themeButton.className = 'tool-control';
+      themeButton.className = 'tool-control theme-control';
       themeButton.dataset.themeToggle = '';
       themeButton.dataset.theme = 'auto';
       tools.appendChild(themeButton);
@@ -97,9 +103,10 @@
     localStorage.setItem('sprey-theme', selected);
 
     if (themeButton) {
-      const labels = { auto: 'Theme: Auto', light: 'Theme: Light', dark: 'Theme: Dark' };
-      themeButton.textContent = labels[selected];
+      themeButton.innerHTML = themeIcons[selected];
       themeButton.dataset.theme = selected;
+      themeButton.setAttribute('aria-label', themeLabels[selected]);
+      themeButton.title = themeLabels[selected];
     }
   }
 
