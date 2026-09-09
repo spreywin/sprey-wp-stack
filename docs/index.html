@@ -8,8 +8,8 @@
   <link rel="canonical" href="https://wp-stack.sprey.win/">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <title>Sprey WP Stack</title>
-  <link rel="stylesheet" href="./style.css?v=20260909a">
-  <script src="./site.js?v=20260909a" defer></script>
+  <link rel="stylesheet" href="./style.css?v=20260909b">
+  <script src="./site.js?v=20260909b" defer></script>
 </head>
 <body>
 <header class="site-header">
@@ -59,7 +59,7 @@
   </section>
 
   <section class="section split">
-    <div><p class="eyebrow">QUICK START</p><h2>From a clean VPS to WordPress.</h2><p>The installer prepares Docker when needed, creates private credentials, preserves the active SSH port while configuring UFW, starts the stack, and enables the resource status helper.</p></div>
+    <div><p class="eyebrow">QUICK START</p><h2>From a clean VPS to WordPress.</h2><p>The installer prepares Docker and Docker Compose when needed, creates private credentials, preserves the active SSH port while configuring UFW, starts the stack, and enables the resource status helper.</p></div>
     <div class="terminal"><div class="terminal-title"><span></span><span></span><span></span> terminal</div><pre><code>git clone https://github.com/spreywin/sprey-wp-stack.git
 cd sprey-wp-stack
 sudo ./install.sh example.com admin@example.com
@@ -68,7 +68,7 @@ sudo ./install.sh example.com admin@example.com
   </section>
 
   <section id="operations" class="section">
-    <p class="eyebrow">OPERATIONS</p><h2>See what the VPS is doing before the disk disappears.</h2>
+    <p class="eyebrow">OPERATIONS</p><h2>See what the VPS is doing before storage becomes a problem.</h2>
     <div class="status-grid"><article><h3>Disk</h3><p>Filesystem usage and inode pressure.</p></article><article><h3>Memory</h3><p>RAM, swap, uptime, and system load.</p></article><article><h3>Containers</h3><p>CPU, memory, network, and block I/O snapshot.</p></article><article><h3>Docker storage</h3><p>Images, containers, volumes, and build cache usage.</p></article></div>
     <div class="terminal" style="margin-top:24px"><div class="terminal-title"><span></span><span></span><span></span> status</div><pre><code>./status.sh
 
