@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sprey WP Stack — a lightweight production-oriented WordPress and WooCommerce stack with Caddy, MariaDB, BTCPay integration guidance, resource checks, and bounded Docker logs.">
+  <meta name="description" content="Production-ready WordPress and WooCommerce Docker stack with Caddy, MariaDB, phpMyAdmin and BTCPay integration for small VPS deployments.">
   <meta name="theme-color" content="#07110b">
   <link rel="canonical" href="https://wp-stack.sprey.win/">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
-  <title>Sprey WP Stack</title>
+  <title>Sprey WP Stack — WordPress &amp; WooCommerce Docker Stack</title>
   <link rel="stylesheet" href="./style.css?v=20260909b">
   <script src="./site.js?v=20260909b" defer></script>
 </head>
@@ -29,7 +29,7 @@
   <section class="hero hero-grid">
     <div class="hero-copy">
       <p class="eyebrow"><span class="live-dot"></span> PRODUCTION-ORIENTED</p>
-      <h1>Docker stack for WordPress <span>hosting.</span></h1>
+      <h1>WordPress &amp; WooCommerce Docker Stack for Small VPS</h1>
       <p class="lead">Minimal, secure, and easy to manage. WordPress + WooCommerce with Caddy, MariaDB, bounded logs, resource checks, and a clean path to BTCPay Server.</p>
       <div class="hero-actions">
         <a class="button primary" href="https://docs.sprey.win/stacks/wp-stack/">View documentation →</a>
@@ -77,15 +77,15 @@ docker system df -v</code></pre></div>
 
   <section class="section"><p class="eyebrow">LOG SAFETY</p><h2>Container logs are bounded by default.</h2><div class="cards"><article><span class="card-number">01</span><h3>Local driver</h3><p>Docker's local logging driver prevents uncontrolled default log growth.</p></article><article><span class="card-number">02</span><h3>10 MB per file</h3><p>Each container log file is capped at 10 MB.</p></article><article><span class="card-number">03</span><h3>Three files</h3><p>Rotation keeps at most three files per container.</p></article></div></section>
 
-  <section class="section cloudflare"><div><p class="eyebrow">PAYMENTS & RESILIENCE</p><h2>WooCommerce, BTCPay and Cloudflare stay loosely coupled.</h2></div><p>BTCPay Server remains separate from the WordPress stack. WooCommerce connects through the current BTCPay integration. The live Sprey payment service is available at <a href="https://pay.sprey.win/">pay.sprey.win ↗</a>. The v1 design also keeps a static Cloudflare Pages outage fallback separate from the live WooCommerce origin.</p></section>
+  <section class="section cloudflare"><div><p class="eyebrow">PAYMENTS & RESILIENCE</p><h2>WooCommerce, BTCPay and Cloudflare stay loosely coupled.</h2></div><p>BTCPay Server remains separate from the WordPress stack. WooCommerce connects through the current BTCPay integration. Learn how the stack fits into <a href="https://docs.sprey.win/products/sprey-processing/">Sprey Processing</a>, or use the live Sprey payment service at <a href="https://pay.sprey.win/">pay.sprey.win ↗</a>. The v1 design also keeps a static Cloudflare Pages outage fallback separate from the live WooCommerce origin.</p></section>
 
-  <section class="section contribute"><div><p class="eyebrow">DOCUMENTATION</p><h2>Need help or want to contribute?</h2><p class="lead">Use the canonical Sprey Docs portal for guides and architecture, or open the source repository on GitHub.</p><div class="hero-actions"><a class="button primary" href="https://docs.sprey.win/">Sprey Docs</a><a class="button secondary" href="https://github.com/spreywin/sprey-wp-stack">GitHub repository ↗</a></div></div><div class="mini-orbit" aria-hidden="true"><img src="./brand.svg" alt=""></div></section>
+  <section class="section contribute"><div><p class="eyebrow">DOCUMENTATION</p><h2>Need help or want to contribute?</h2><p class="lead">Use the canonical Sprey Docs portal for guides and architecture, or open the source repository on GitHub.</p><div class="hero-actions"><a class="button primary" href="https://docs.sprey.win/stacks/wp-stack/">WP Stack docs</a><a class="button secondary" href="https://github.com/spreywin/sprey-wp-stack">GitHub repository ↗</a></div></div><div class="mini-orbit" aria-hidden="true"><img src="./brand.svg" alt=""></div></section>
 </main>
 <footer>
   <span>© 2026 Sprey</span>
   <div class="footer-links">
     <a href="https://pay.sprey.win/">Payments ↗</a>
-    <a href="https://docs.sprey.win/">Documentation</a>
+    <a href="https://docs.sprey.win/stacks/wp-stack/">Documentation</a>
     <span class="footer-socials">
       <a class="social-icon" href="https://github.com/spreywin/sprey-wp-stack" aria-label="GitHub repository" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.86c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.84a9.6 9.6 0 0 1 2.5.34c1.91-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.69-4.57 4.94.36.31.68.92.68 1.86V21c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
     </span>
