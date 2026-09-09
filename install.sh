@@ -45,8 +45,7 @@ else
   note "Existing swap detected; leaving it unchanged"
 fi
 
-if ! command -v docker >/dev/null; then
-  note "Installing Docker Engine and Docker Compose"
+ensure_docker_repo() {
   install -m 0755 -d /etc/apt/keyrings
   curl -fsSL "https://download.docker.com/linux/$ID/gpg" -o /etc/apt/keyrings/docker.asc
   chmod a+r /etc/apt/keyrings/docker.asc
@@ -54,7 +53,16 @@ if ! command -v docker >/dev/null; then
   printf 'deb [arch=%s signed-by=%s] https://download.docker.com/linux/%s %s stable\n' \
     "$(dpkg --print-architecture)" "/etc/apt/keyrings/docker.asc" "$ID" "$CODENAME" > /etc/apt/sources.list.d/docker.list
   apt-get update
+}
+
+if ! command -v docker >/dev/null; then
+  note "Installing Docker Engine and Docker Compose"
+  ensure_docker_repo
   apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+elif ! docker compose version >/dev/null 2>&1; then
+  note "Docker Engine detected without Docker Compose v2; installing Compose plugin"
+  ensure_docker_repo
+  apt-get install -y docker-compose-plugin
 fi
 
 docker compose version >/dev/null || fail "Docker Compose v2 is required."
