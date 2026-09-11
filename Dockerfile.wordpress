@@ -1,5 +1,16 @@
 FROM wordpress:php8.4-apache
 
+# Tune Apache prefork for small VPS deployments.
+RUN cat > /etc/apache2/mods-available/mpm_prefork.conf <<'EOF'
+<IfModule mpm_prefork_module>
+    StartServers             2
+    MinSpareServers          2
+    MaxSpareServers          4
+    MaxRequestWorkers        8
+    MaxConnectionsPerChild   500
+</IfModule>
+EOF
+
 # New image builds bundle the current stable releases from WordPress.org.
 # Existing sites keep their plugin files in the persistent wordpress_data volume;
 # image rebuilds are not an in-place plugin downgrade mechanism.
