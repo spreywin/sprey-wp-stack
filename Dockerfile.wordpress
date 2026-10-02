@@ -1,5 +1,12 @@
 FROM wordpress:php8.4-apache
 
+# PHP limits for Elementor, WooCommerce and demo imports.
+RUN { \
+    echo 'memory_limit=768M'; \
+    echo 'upload_max_filesize=64M'; \
+    echo 'post_max_size=64M'; \
+} > "$PHP_INI_DIR/conf.d/zz-sprey.ini"
+
 # Tune Apache prefork for small VPS deployments.
 RUN cat > /etc/apache2/mods-available/mpm_prefork.conf <<'EOF'
 <IfModule mpm_prefork_module>
