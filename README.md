@@ -1,6 +1,6 @@
 # Sprey WP Stack
 
-> **Stable release:** [v1.0.0](https://github.com/spreywin/sprey-wp-stack/releases/tag/v1.0.0) — released 2026-09-09  
+> **Stable release:** [v1.1.0](https://github.com/spreywin/sprey-wp-stack/releases/tag/v1.1.0) — released 2026-10-02  
 > **Product landing:** [Sprey WP Stack](https://wp-stack.sprey.win/)  
 > **Sprey Docs:** [docs.sprey.win](https://docs.sprey.win/)  
 > **Stack documentation:** [Sprey WP Stack docs](https://docs.sprey.win/stacks/wp-stack/)
@@ -259,6 +259,14 @@ The rebuild/recreate path has been explicitly verified with existing plugin file
 
 This verifies that existing plugin files in `wordpress_data` are preserved across WordPress image rebuild/recreate. It does **not** claim a rollback test after an in-admin upgrade to a newer upstream plugin version, because no newer plugin release was available during that test.
 
+## v1.1.0 release notes
+
+- Increased PHP limits for Elementor, WooCommerce and large demo imports.
+- Set web PHP execution and input time limits to 300 seconds.
+- Tuned Apache prefork for small VPS deployments.
+- Kept WooCommerce and BTCPay for WooCommerce installation in the WordPress image build.
+- Verified a successful OceanWP RockSolid demo import on the production stack.
+
 ## Documentation and verification rule
 
 Canonical cross-project documentation lives in [`spreywin/sprey-docs`](https://github.com/spreywin/sprey-docs).
@@ -267,4 +275,4 @@ The operating rule is simple:
 
 > **Build it. Verify it. Document it.**
 
-**Sprey WP Stack v1.0.0 is the current stable release.** It was published after the targeted infrastructure and deployment checks were completed. A real BTCPay payment flow remains separate payment-product integration work. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
+**Sprey WP Stack v1.1.0 is the current stable release.** It was published after the targeted infrastructure and deployment checks were completed. A real BTCPay payment flow remains separate payment-product integration work. The plugin rebuild/recreate persistence boundary is verified; an in-admin upgrade-to-newer-version rollback test remains unclaimed because no newer upstream plugin version was available during the test.
