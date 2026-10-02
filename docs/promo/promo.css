@@ -1,0 +1,22 @@
+/* Shared promo styles for Sprey Processing concepts */
+.promo-shell{width:min(1180px,calc(100% - 40px));margin:auto}
+.promo-hero{padding:86px 0 58px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:54px;align-items:center}
+.promo-hero h1{font-size:clamp(48px,7vw,86px);line-height:.98;letter-spacing:-.055em;margin:14px 0 24px;max-width:820px}
+.promo-hero h1 em{font-style:normal;color:var(--accent)}
+.promo-hero .lead{font-size:20px;max-width:760px}
+.promo-kicker{display:flex;align-items:center;gap:9px;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.promo-panel{padding:28px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(155deg,color-mix(in srgb,var(--surface) 95%,transparent),color-mix(in srgb,var(--page) 82%,transparent));box-shadow:var(--shadow)}
+.promo-panel h3{margin:0 0 18px;font-size:23px}.promo-panel p{color:var(--muted)}
+.metric-list{display:grid;gap:12px;margin-top:22px}.metric{display:flex;justify-content:space-between;gap:18px;padding:13px 0;border-top:1px solid var(--line)}.metric b{color:var(--accent)}.metric span{color:var(--muted);text-align:right}
+.trust-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:10px 0 66px}.trust-row div{padding:18px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--surface) 78%,transparent)}.trust-row b{display:block;margin-bottom:5px}.trust-row span{font-size:13px;color:var(--muted)}
+.promo-section{padding:70px 0;border-top:1px solid var(--line)}.promo-section h2{font-size:clamp(32px,5vw,56px);line-height:1.02;letter-spacing:-.045em;margin:10px 0 28px;max-width:850px}
+.promo-section>.section-lead{max-width:760px;color:var(--muted);font-size:18px}
+.promo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}.promo-card{padding:26px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--surface) 84%,transparent)}.promo-card .num{color:var(--accent);font:700 12px ui-monospace,monospace}.promo-card h3{font-size:22px;margin:16px 0 10px}.promo-card p{color:var(--muted);margin-bottom:0}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}.flow div{position:relative;padding:24px 20px;border:1px solid var(--line);border-radius:16px}.flow b{display:block;margin-bottom:8px}.flow span{color:var(--muted);font-size:14px}
+.notice{margin-top:30px;padding:18px 20px;border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--surface));color:var(--muted);border-radius:0 14px 14px 0}
+.cta-band{margin:70px auto;padding:42px;border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:24px;background:radial-gradient(circle at 85% 20%,rgba(132,204,22,.13),transparent 32%),color-mix(in srgb,var(--surface) 88%,transparent);display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}.cta-band h2{font-size:clamp(30px,4vw,48px);margin:0 0 10px}.cta-band p{margin:0;color:var(--muted)}
+.badges{display:flex;flex-wrap:wrap;gap:9px;margin:24px 0}.badge{padding:8px 11px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--muted);background:color-mix(in srgb,var(--surface) 75%,transparent)}
+.variant-2 .promo-hero{text-align:center;display:block;padding-top:104px}.variant-2 .promo-hero h1,.variant-2 .promo-hero .lead{margin-left:auto;margin-right:auto}.variant-2 .hero-actions{justify-content:center}.variant-2 .badges{justify-content:center}.variant-2 .promo-panel{max-width:900px;margin:42px auto 0;text-align:left}
+.variant-3 .promo-hero{grid-template-columns:.95fr 1.05fr}.variant-3 .promo-panel{background:var(--terminal)}.variant-3 .quote{font-size:28px;line-height:1.28;letter-spacing:-.035em;margin:0}.variant-3 .quote strong{color:var(--accent)}
+@media(max-width:900px){.promo-hero,.variant-3 .promo-hero,.cta-band{grid-template-columns:1fr}.variant-3 .promo-panel{max-width:680px;width:100%;margin:0 auto}.variant-3 .quote{font-size:clamp(24px,5vw,30px)}.trust-row,.flow{grid-template-columns:repeat(2,1fr)}.promo-grid{grid-template-columns:1fr}.cta-band .hero-actions{margin:0}}
+@media(max-width:620px){.promo-hero{padding-top:62px}.promo-hero h1{font-size:clamp(42px,15vw,62px)}.trust-row,.flow{grid-template-columns:1fr}.cta-band{padding:28px}.promo-shell{width:min(100% - 28px,1180px)}}
